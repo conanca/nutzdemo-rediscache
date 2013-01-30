@@ -14,5 +14,5 @@ public @interface Cache {
 
 	public String cacheNamePrefix() default "";
 
-	public String[] delCaches() default "";
+	public String[] delCaches() default {""};
 }
