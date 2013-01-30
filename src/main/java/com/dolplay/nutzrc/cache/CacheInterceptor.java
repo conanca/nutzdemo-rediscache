@@ -66,9 +66,9 @@ public class CacheInterceptor implements MethodInterceptor {
 			// 获取该方法欲操作的缓存的 VALUE
 			String cacheValue = jedis.get(cacheName);
 			// 获取该方法的操作类型
-			Oper operType = cacheAn.operType();
+			CRUD operType = cacheAn.oper();
 			// 若操作类型为READ且缓存值不为空，则该方法直接返回缓存里相应的值
-			if (operType == Oper.READ && cacheValue != null) {
+			if (operType == CRUD.READ && cacheValue != null) {
 				chain.setReturnValue(Json.fromJson(method.getReturnType(), cacheValue));
 				logger.debug("got value from redis");
 				return;
@@ -76,7 +76,7 @@ public class CacheInterceptor implements MethodInterceptor {
 			// 执行方法
 			chain.doChain();
 			// 若操作类型为READ且缓存值不为空、或操作类型为UPDATE这三种情况时，更新相应缓存
-			if ((operType == Oper.READ && cacheValue == null) || operType == Oper.UPDATE) {
+			if ((operType == CRUD.READ && cacheValue == null) || operType == CRUD.UPDATE) {
 				Object returnObj = chain.getReturn();
 				if (returnObj != null) {
 					jedis.set(cacheName, Json.toJson(returnObj));
@@ -84,7 +84,7 @@ public class CacheInterceptor implements MethodInterceptor {
 				}
 			}
 			// 当操作类型为DELETE时，删除相应缓存
-			if (operType == Oper.DELETE) {
+			if (operType == CRUD.DELETE) {
 				jedis.del(cacheName);
 				logger.debug("delete value from redis");
 			}

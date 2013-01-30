@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 @Documented
 public @interface Cache {
-	public Oper operType() default Oper.READ;
+	public CRUD oper() default CRUD.READ;
 
 	public String cacheNamePrefix() default "";
 

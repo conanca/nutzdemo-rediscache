@@ -11,7 +11,7 @@ import org.nutz.service.IdEntityService;
 
 import com.dolplay.nutzrc.cache.Cache;
 import com.dolplay.nutzrc.cache.CacheNameSuffix;
-import com.dolplay.nutzrc.cache.Oper;
+import com.dolplay.nutzrc.cache.CRUD;
 import com.dolplay.nutzrc.domain.User;
 
 @IocBean(fields = { "dao" })
@@ -34,13 +34,13 @@ public class UserService extends IdEntityService<User> {
 	}
 
 	@Aop("cacheInterceptor")
-	@Cache(operType = Oper.READ, cacheNamePrefix = "cache:system:allusers")
+	@Cache(oper = CRUD.READ, cacheNamePrefix = "cache:system:allusers")
 	public List<User> list() {
 		return query(null, null);
 	}
 
 	@Aop("cacheInterceptor")
-	@Cache(operType = Oper.READ, cacheNamePrefix = "cache:system:user")
+	@Cache(oper = CRUD.READ, cacheNamePrefix = "cache:system:user")
 	public User view(@CacheNameSuffix int id) {
 		return fetch(id);
 	}
@@ -52,14 +52,14 @@ public class UserService extends IdEntityService<User> {
 	}
 
 	@Aop("cacheInterceptor")
-	@Cache(operType = Oper.UPDATE, cacheNamePrefix = "cache:system:user", delCaches = { "cache:system:allusers" })
+	@Cache(oper = CRUD.UPDATE, cacheNamePrefix = "cache:system:user", delCaches = { "cache:system:allusers" })
 	public User update(@CacheNameSuffix int id, User user) {
 		dao().update(user);
 		return user;
 	}
 
 	@Aop("cacheInterceptor")
-	@Cache(operType = Oper.DELETE, cacheNamePrefix = "cache:system:user")
+	@Cache(oper = CRUD.DELETE, cacheNamePrefix = "cache:system:user")
 	public void remove(@CacheNameSuffix int id) {
 		delete(id);
 	}
