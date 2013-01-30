@@ -15,6 +15,10 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+/**
+ * @author Conanca
+ * 实现redis缓存操作的方法拦截器
+ */
 @IocBean
 public class CacheInterceptor implements MethodInterceptor {
 	private static Logger logger = LoggerFactory.getLogger(CacheInterceptor.class);
@@ -23,9 +27,9 @@ public class CacheInterceptor implements MethodInterceptor {
 	private JedisPool jedisPool;
 
 	public void filter(InterceptorChain chain) throws Throwable {
-		// 从连接池中获取一个jedis实例
+		// 从连接池中取出一个jedis实例
 		Jedis jedis = jedisPool.getResource();
-		// 取得方法及其注解
+		// 取得被拦截的方法及其注解
 		Method method = chain.getCallingMethod();
 		Cache cacheAn = method.getAnnotation(Cache.class);
 		// 删除注解(delCaches)标明的需要删除的缓存
@@ -47,7 +51,7 @@ public class CacheInterceptor implements MethodInterceptor {
 				for (int i = 0; i < ans.length; i++) {
 					for (int j = 0; j < ans[i].length; j++) {
 						if (ans[i][j].annotationType() == CacheNameSuffix.class) {
-							cacheParaArr[k] = String.valueOf(args[i]);
+							cacheParaArr[k] = Json.toJson(args[i]);
 							k++;
 						}
 					}
@@ -61,7 +65,7 @@ public class CacheInterceptor implements MethodInterceptor {
 				}
 			}
 			String cacheName = cacheNameSb.toString();
-			logger.debug("got cacheName : " + cacheName);
+			logger.debug("got the cacheName : " + cacheName);
 
 			// 获取该方法欲操作的缓存的 VALUE
 			String cacheValue = jedis.get(cacheName);
@@ -70,23 +74,25 @@ public class CacheInterceptor implements MethodInterceptor {
 			// 若操作类型为READ且缓存值不为空，则该方法直接返回缓存里相应的值
 			if (operType == CRUD.READ && cacheValue != null) {
 				chain.setReturnValue(Json.fromJson(method.getReturnType(), cacheValue));
-				logger.debug("got value from redis");
+				logger.debug("got a value from redis");
 				return;
 			}
 			// 执行方法
 			chain.doChain();
-			// 若操作类型为READ且缓存值不为空、或操作类型为UPDATE这三种情况时，更新相应缓存
+			// 若操作类型为READ且缓存值为空、或操作类型为UPDATE，更新相应缓存
 			if ((operType == CRUD.READ && cacheValue == null) || operType == CRUD.UPDATE) {
 				Object returnObj = chain.getReturn();
 				if (returnObj != null) {
 					jedis.set(cacheName, Json.toJson(returnObj));
-					logger.debug("new value into redis");
+					logger.debug("set a new value into redis");
+				}else{
+					logger.warn("method return value is null");
 				}
 			}
 			// 当操作类型为DELETE时，删除相应缓存
 			if (operType == CRUD.DELETE) {
 				jedis.del(cacheName);
-				logger.debug("delete value from redis");
+				logger.debug("delete a value from redis");
 			}
 		} else {
 			// 执行方法
