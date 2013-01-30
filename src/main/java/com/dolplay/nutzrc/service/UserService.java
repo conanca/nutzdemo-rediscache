@@ -14,6 +14,11 @@ import com.dolplay.nutzrc.cache.CacheNameSuffix;
 import com.dolplay.nutzrc.cache.CRUD;
 import com.dolplay.nutzrc.domain.User;
 
+/**
+ * @author Conanca
+ * 用户增删改查等操作的Service类
+ * 演示使用redis缓存的一个示例
+ */
 @IocBean(fields = { "dao" })
 public class UserService extends IdEntityService<User> {
 	public UserService() {
