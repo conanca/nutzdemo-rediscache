@@ -60,7 +60,7 @@ public class CacheInterceptor implements MethodInterceptor {
 			StringBuilder cacheNameSb = new StringBuilder(cacheNamePrefix);
 			for (String cacahePara : cacheParaArr) {
 				if (cacahePara != null) {
-					cacheNameSb.append(":");
+					cacheNameSb.append(CacheName.CACHENAME_DELIMITER);
 					cacheNameSb.append(cacahePara);
 				}
 			}
@@ -85,7 +85,7 @@ public class CacheInterceptor implements MethodInterceptor {
 				if (returnObj != null) {
 					jedis.set(cacheName, Json.toJson(returnObj));
 					logger.debug("set a new value into redis");
-				}else{
+				} else {
 					logger.warn("method return value is null");
 				}
 			}
