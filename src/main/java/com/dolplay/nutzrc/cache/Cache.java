@@ -15,9 +15,11 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 @Documented
 public @interface Cache {
-	public CRUD oper() default CRUD.READ;
 
+	/**
+	 * 指明读取哪个缓存
+	 * @return
+	 */
 	public String cacheNamePrefix() default "";
 
-	public String[] delCaches() default {""};
 }
