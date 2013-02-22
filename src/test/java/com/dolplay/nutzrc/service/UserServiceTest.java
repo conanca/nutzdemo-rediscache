@@ -26,7 +26,7 @@ public class UserServiceTest {
 	public static void setUpBeforeClass() throws Exception {
 		Ioc ioc = IocProvider.ioc();
 		// 初始化数据库
-		logger.debug("初始化数据库...");
+		logger.info("初始化数据库...");
 		Dao dao = ioc.get(Dao.class, "dao");
 		dao.create(User.class, true);
 		FileSqlManager fm = new FileSqlManager("init_system_h2.sql");
@@ -34,7 +34,7 @@ public class UserServiceTest {
 		dao.execute(sqlList.toArray(new Sql[sqlList.size()]));
 
 		// 清空redis
-		logger.debug("清空redis...");
+		logger.info("清空redis...");
 		JedisPool pool = ioc.get(JedisPool.class, "jedisPool");
 		Jedis jedis = pool.getResource();
 		jedis.flushDB();
@@ -47,42 +47,43 @@ public class UserServiceTest {
 		// 获取UserService示例
 		userService = ioc.get(UserService.class);
 
-		logger.debug("第一次执行view方法(获取一个user)...");
+		logger.info("第一次执行view方法(获取一个user)...");
 		userService.view(2);
-		logger.debug("第二次执行view方法(获取一个user)...");
+		logger.info("第二次执行view方法(获取一个user)...");
 		User user = userService.view(2);
 		logger.info(Json.toJson(user));
 
-		logger.debug("第一次执行list方法...");
+		logger.info("第一次执行list方法...");
 		List<User> users = userService.list();
 		logger.info("userlist个数：" + users.size());
-		logger.debug("第二次执行list方法...");
+		logger.info("第二次执行list方法...");
 		users = userService.list();
 		logger.info("userlist个数：" + users.size());
 
-		logger.debug("插入新的user...");
+		logger.info("插入新的user...");
 		user = new User();
 		user.setName("张三");
 		user.setDescription("just for test");
 		userService.insert(user);
-		logger.debug("第三次执行list方法...");
+		logger.info("第三次执行list方法...");
 		users = userService.list();
 		logger.info("userlist个数：" + users.size());
+		userService.delCacheForTest();
 		logger.debug("第四次执行list方法...");
 		users = userService.list();
 		logger.info("userlist个数：" + users.size());
 
-		logger.debug("获取一个user并更新字段...");
+		logger.info("获取一个user并更新字段...");
 		user = userService.view(3);
 		user.setDescription("testttttttttttttttttttttttt");
 		userService.update(3, user);
 		user = userService.view(3);
 		logger.info("更新后查到的user：" + Json.toJson(user));
 
-		logger.debug("删除一个user...");
-		userService.remove(9);
-		logger.debug("尝试查询这个user...");
-		user = userService.view(9);
+		logger.info("删除一个user...");
+		userService.remove(3);
+		logger.info("尝试查询这个user...");
+		user = userService.view(3);
 		logger.info("查到的user:" + Json.toJson(user));
 	}
 }

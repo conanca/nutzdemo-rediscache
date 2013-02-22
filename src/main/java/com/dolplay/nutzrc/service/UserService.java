@@ -96,9 +96,9 @@ public class UserService extends IdEntityService<User> {
 	}
 
 	/**
-	 * 手动删除一个缓存
+	 * 手动删除全部用户列表缓存
 	 */
 	public void delCacheForTest() {
-		CacheHelper.remove(CacheName.SYSTEM_USER + ":1");
+		CacheHelper.remove(CacheName.SYSTEM_ALLUSERS);
 	}
 }
