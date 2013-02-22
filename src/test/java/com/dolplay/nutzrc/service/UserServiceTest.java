@@ -69,7 +69,7 @@ public class UserServiceTest {
 		users = userService.list();
 		logger.info("userlist个数：" + users.size());
 		userService.delCacheForTest();
-		logger.debug("第四次执行list方法...");
+		logger.info("第四次执行list方法...");
 		users = userService.list();
 		logger.info("userlist个数：" + users.size());
 

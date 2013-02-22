@@ -28,7 +28,7 @@ public class CacheHelper {
 	}
 
 	/**
-	 * 增加一个缓存，如果存在将更新该缓存。可指定是否是永久缓存。
+	 * 增加一个缓存，如果存在将更新该缓存。可指定是否是永久缓存(permanent为true表示永久缓存)
 	 * @param cacheName
 	 * @param cacheValue
 	 * @param permanent
@@ -46,6 +46,11 @@ public class CacheHelper {
 		jedisPool.returnResource(jedis);
 	}
 
+	/**
+	 * 根据缓存名获取一个缓存的值
+	 * @param cacheName
+	 * @return
+	 */
 	public static String get(String cacheName) {
 		JedisPool jedisPool = IocProvider.ioc().get(JedisPool.class, "jedisPool");
 		Jedis jedis = jedisPool.getResource();

@@ -51,15 +51,17 @@ public class CacheInterceptor implements MethodInterceptor {
 				}
 			}
 			String cacheName = cacheNameSb.toString();
-			logger.debug("got the cacheName : " + cacheName);
+			logger.debug("Cache name : " + cacheName);
 
 			// 获取该方法欲读取的缓存的 VALUE
 			String cacheValue = CacheHelper.get(cacheName);
 			// 若缓存值不为空，则该方法直接返回缓存里相应的值
 			if (cacheValue != null) {
 				chain.setReturnValue(Json.fromJson(method.getReturnType(), cacheValue));
-				logger.debug("got a value from redis");
+				logger.debug("Get a value from this cache");
 				return;
+			} else {
+				logger.debug("Can't get any value from this cache");
 			}
 			// 执行方法
 			chain.doChain();
@@ -67,9 +69,9 @@ public class CacheInterceptor implements MethodInterceptor {
 			Object returnObj = chain.getReturn();
 			if (returnObj != null) {
 				CacheHelper.set(cacheName, returnObj, false);
-				logger.debug("set a new value into redis");
+				logger.debug("Set a new value for this cache");
 			} else {
-				logger.warn("method return value is null");
+				logger.warn("No value to set for this cache");
 			}
 		} else {
 			// 执行方法
