@@ -7,27 +7,24 @@ import java.util.Map;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.service.IdEntityService;
 
-import com.dolplay.nutzrc.cache.Cache;
-import com.dolplay.nutzrc.cache.CacheHelper;
-import com.dolplay.nutzrc.cache.CacheNameSuffix;
+import com.dolplay.nutzrc.common.cache.Cache;
+import com.dolplay.nutzrc.common.cache.CacheName;
+import com.dolplay.nutzrc.common.cache.CacheNameSuffix;
+import com.dolplay.nutzrc.common.cache.dao.CacheDao;
+import com.dolplay.nutzrc.common.cache.service.CacheIdEntityService;
 import com.dolplay.nutzrc.domain.User;
 
 /**
  * @author Conanca
  * 用户增删改查等操作的Service类
- * 演示使用redis缓存的一个示例
+ * 演示使用缓存的一个示例
  */
-@IocBean(fields = { "dao" })
-public class UserService extends IdEntityService<User> {
+@IocBean(args = { "refer:dao", "refer:cacheDao" })
+public class UserService extends CacheIdEntityService<User> {
 
-	public UserService() {
-		super();
-	}
-
-	public UserService(Dao dao) {
-		super(dao);
+	public UserService(Dao dao, CacheDao cacheDao) {
+		super(dao, cacheDao);
 	}
 
 	public Map<Long, String> map() {
@@ -82,7 +79,7 @@ public class UserService extends IdEntityService<User> {
 	public void update(int id, User user) {
 		dao().update(user);
 		// 立即更新缓存
-		CacheHelper.set(CacheName.SYSTEM_USER + ":" + id, user);
+		cacheDao().set(CacheName.SYSTEM_USER + ":" + id, user);
 	}
 
 	/**
@@ -92,13 +89,13 @@ public class UserService extends IdEntityService<User> {
 	public void remove(int id) {
 		delete(id);
 		// 立即删除缓存
-		CacheHelper.remove(CacheName.SYSTEM_USER + ":" + id);
+		cacheDao().remove(CacheName.SYSTEM_USER + ":" + id);
 	}
 
 	/**
 	 * 手动删除全部用户列表缓存
 	 */
 	public void delCacheForTest() {
-		CacheHelper.remove(CacheName.SYSTEM_ALLUSERS);
+		cacheDao().remove(CacheName.SYSTEM_ALLUSERS);
 	}
 }

@@ -1,23 +1,28 @@
-package com.dolplay.nutzrc.cache;
+package com.dolplay.nutzrc.common.cache.interceptor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
-import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dolplay.nutzrc.common.cache.Cache;
+import com.dolplay.nutzrc.common.cache.CacheConfig;
+import com.dolplay.nutzrc.common.cache.CacheNameSuffix;
+import com.dolplay.nutzrc.common.cache.dao.CacheDao;
+
 /**
  * @author Conanca
  * 实现缓存预先读取的方法拦截器
  */
-@IocBean
 public class CacheInterceptor implements MethodInterceptor {
 	private static Logger logger = LoggerFactory.getLogger(CacheInterceptor.class);
+
+	private CacheDao cacheDao;
 
 	public void filter(InterceptorChain chain) throws Throwable {
 
@@ -54,7 +59,7 @@ public class CacheInterceptor implements MethodInterceptor {
 			logger.debug("Cache name : " + cacheName);
 
 			// 获取该方法欲读取的缓存的 VALUE
-			String cacheValue = CacheHelper.get(cacheName);
+			String cacheValue = cacheDao.get(cacheName);
 			// 若缓存值不为空，则该方法直接返回缓存里相应的值
 			if (cacheValue != null) {
 				chain.setReturnValue(Json.fromJson(method.getReturnType(), cacheValue));
@@ -68,7 +73,7 @@ public class CacheInterceptor implements MethodInterceptor {
 			// 获取方法返回值并增加相应缓存
 			Object returnObj = chain.getReturn();
 			if (returnObj != null) {
-				CacheHelper.set(cacheName, returnObj);
+				cacheDao.set(cacheName, returnObj);
 				logger.debug("Set a new value for this cache");
 			} else {
 				logger.warn("No value to set for this cache");

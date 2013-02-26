@@ -1,4 +1,4 @@
-package com.dolplay.nutzrc.util;
+package com.dolplay.nutzrc.common;
 
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.NutIoc;

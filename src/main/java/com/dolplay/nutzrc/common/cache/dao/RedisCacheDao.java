@@ -1,4 +1,4 @@
-package com.dolplay.nutzrc.cache;
+package com.dolplay.nutzrc.common.cache.dao;
 
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.json.Json;
@@ -6,25 +6,16 @@ import org.nutz.json.Json;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import com.dolplay.nutzrc.util.IocProvider;
+import com.dolplay.nutzrc.common.cache.CacheConfig;
 
-/**
- * 操作缓存的帮助类
- * @author conanca
- */
-public class CacheHelper {
+public class RedisCacheDao implements CacheDao {
 
-	/**
-	 * 删除一个或多个缓存。
-	 * @param cacheNames
-	 * @return
-	 */
-	public static long remove(String... cacheNames) {
-		JedisPool jedisPool = IocProvider.ioc().get(JedisPool.class, "jedisPool");
-		Jedis jedis = jedisPool.getResource();
-		Long count = jedis.del(cacheNames);
-		jedisPool.returnResource(jedis);
-		return count == null ? 0 : count.longValue();
+	private PropertiesProxy config;
+	private JedisPool jedisPool;
+
+	public RedisCacheDao(PropertiesProxy config, JedisPool jedisPool) {
+		this.config = config;
+		this.jedisPool = jedisPool;
 	}
 
 	/**
@@ -32,9 +23,7 @@ public class CacheHelper {
 	 * @param cacheName
 	 * @param cacheValue
 	 */
-	public static void set(String cacheName, Object cacheValue) {
-		PropertiesProxy config = IocProvider.ioc().get(PropertiesProxy.class, "config");
-		JedisPool jedisPool = IocProvider.ioc().get(JedisPool.class, "jedisPool");
+	public void set(String cacheName, Object cacheValue) {
 		Jedis jedis = jedisPool.getResource();
 		jedis.setex(cacheName, config.getInt("CACHE_TIMEOUT", CacheConfig.DEFAULT_CACHE_TIMEOUT),
 				Json.toJson(cacheValue));
@@ -47,8 +36,7 @@ public class CacheHelper {
 	 * @param timeout
 	 * @param cacheValue
 	 */
-	public static void set(String cacheName, int timeout, Object cacheValue) {
-		JedisPool jedisPool = IocProvider.ioc().get(JedisPool.class, "jedisPool");
+	public void set(String cacheName, int timeout, Object cacheValue) {
 		Jedis jedis = jedisPool.getResource();
 		if (timeout <= 0) {
 			jedis.set(cacheName, Json.toJson(cacheValue));
@@ -63,11 +51,22 @@ public class CacheHelper {
 	 * @param cacheName
 	 * @return
 	 */
-	public static String get(String cacheName) {
-		JedisPool jedisPool = IocProvider.ioc().get(JedisPool.class, "jedisPool");
+	public String get(String cacheName) {
 		Jedis jedis = jedisPool.getResource();
 		String valueJson = jedis.get(cacheName);
 		jedisPool.returnResource(jedis);
 		return valueJson;
+	}
+
+	/**
+	 * 删除一个或多个缓存。
+	 * @param cacheNames
+	 * @return
+	 */
+	public long remove(String... cacheNames) {
+		Jedis jedis = jedisPool.getResource();
+		Long count = jedis.del(cacheNames);
+		jedisPool.returnResource(jedis);
+		return count == null ? 0 : count.longValue();
 	}
 }

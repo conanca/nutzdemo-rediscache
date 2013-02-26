@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import com.dolplay.nutzrc.common.IocProvider;
 import com.dolplay.nutzrc.domain.User;
-import com.dolplay.nutzrc.util.IocProvider;
 
 public class UserServiceTest {
 	private static Logger logger = LoggerFactory.getLogger(UserServiceTest.class);

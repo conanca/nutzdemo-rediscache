@@ -1,4 +1,4 @@
-package com.dolplay.nutzrc.cache;
+package com.dolplay.nutzrc.common.cache;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
