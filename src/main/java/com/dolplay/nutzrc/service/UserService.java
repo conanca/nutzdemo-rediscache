@@ -82,7 +82,7 @@ public class UserService extends IdEntityService<User> {
 	public void update(int id, User user) {
 		dao().update(user);
 		// 立即更新缓存
-		CacheHelper.set(CacheName.SYSTEM_USER + ":" + id, user, false);
+		CacheHelper.set(CacheName.SYSTEM_USER + ":" + id, user);
 	}
 
 	/**

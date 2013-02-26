@@ -68,7 +68,7 @@ public class CacheInterceptor implements MethodInterceptor {
 			// 获取方法返回值并增加相应缓存
 			Object returnObj = chain.getReturn();
 			if (returnObj != null) {
-				CacheHelper.set(cacheName, returnObj, false);
+				CacheHelper.set(cacheName, returnObj);
 				logger.debug("Set a new value for this cache");
 			} else {
 				logger.warn("No value to set for this cache");
