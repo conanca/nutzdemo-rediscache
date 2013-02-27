@@ -5,7 +5,7 @@ import org.nutz.service.IdEntityService;
 
 import com.dolplay.nutzrc.common.cache.dao.CacheDao;
 
-public class CacheIdEntityService<T> extends IdEntityService<T> {
+public class CacheIdEntityService<T> extends IdEntityService<T> implements CacheService {
 	private CacheDao cacheDao;
 
 	public CacheIdEntityService(Dao dao, CacheDao cacheDao) {

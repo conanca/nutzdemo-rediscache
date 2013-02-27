@@ -1,5 +1,7 @@
 package com.dolplay.nutzrc.domain;
 
+import java.util.Date;
+
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.ColType;
 import org.nutz.dao.entity.annotation.Column;
@@ -13,6 +15,12 @@ public class User {
 	@Column
 	@ColDefine(type = ColType.VARCHAR, width = 200)
 	private String name;
+	@Column
+	@ColDefine(type = ColType.VARCHAR, width = 10)
+	private String gender;
+	@Column
+	@ColDefine(type = ColType.DATE)
+	private Date birthday;
 	@Column
 	@ColDefine(type = ColType.VARCHAR, width = 500)
 	private String description;
@@ -31,6 +39,22 @@ public class User {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
 	}
 
 	public String getDescription() {

@@ -14,7 +14,7 @@ public class RedisCacheDao implements CacheDao {
 	private static Logger logger = LoggerFactory.getLogger(RedisCacheDao.class);
 
 	private PropertiesProxy config;
-	private JedisPool jedisPool;
+	protected JedisPool jedisPool;
 
 	public RedisCacheDao(PropertiesProxy config, JedisPool jedisPool) {
 		this.config = config;

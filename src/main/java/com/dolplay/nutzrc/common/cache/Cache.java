@@ -22,4 +22,6 @@ public @interface Cache {
 	 */
 	public String cacheNamePrefix() default "";
 
+	public CacheType cacheType() default CacheType.String;
+
 }
