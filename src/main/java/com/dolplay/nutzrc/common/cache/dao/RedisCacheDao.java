@@ -2,6 +2,8 @@ package com.dolplay.nutzrc.common.cache.dao;
 
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.json.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -9,6 +11,7 @@ import redis.clients.jedis.JedisPool;
 import com.dolplay.nutzrc.common.cache.CacheConfig;
 
 public class RedisCacheDao implements CacheDao {
+	private static Logger logger = LoggerFactory.getLogger(RedisCacheDao.class);
 
 	private PropertiesProxy config;
 	private JedisPool jedisPool;
@@ -24,10 +27,19 @@ public class RedisCacheDao implements CacheDao {
 	 * @param cacheValue
 	 */
 	public void set(String cacheName, Object cacheValue) {
-		Jedis jedis = jedisPool.getResource();
-		jedis.setex(cacheName, config.getInt("CACHE_TIMEOUT", CacheConfig.DEFAULT_CACHE_TIMEOUT),
-				Json.toJson(cacheValue));
-		jedisPool.returnResource(jedis);
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			jedis.setex(cacheName, config.getInt("CACHE_TIMEOUT", CacheConfig.DEFAULT_CACHE_TIMEOUT),
+					Json.toJson(cacheValue));
+		} catch (Exception e) {
+			logger.error("Redis Error", e);
+			throw e;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+
 	}
 
 	/**
@@ -37,13 +49,21 @@ public class RedisCacheDao implements CacheDao {
 	 * @param cacheValue
 	 */
 	public void set(String cacheName, int timeout, Object cacheValue) {
-		Jedis jedis = jedisPool.getResource();
-		if (timeout <= 0) {
-			jedis.set(cacheName, Json.toJson(cacheValue));
-		} else {
-			jedis.setex(cacheName, timeout, Json.toJson(cacheValue));
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			if (timeout <= 0) {
+				jedis.set(cacheName, Json.toJson(cacheValue));
+			} else {
+				jedis.setex(cacheName, timeout, Json.toJson(cacheValue));
+			}
+		} catch (Exception e) {
+			logger.error("Redis Error", e);
+			throw e;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
 		}
-		jedisPool.returnResource(jedis);
 	}
 
 	/**
@@ -52,9 +72,18 @@ public class RedisCacheDao implements CacheDao {
 	 * @return
 	 */
 	public String get(String cacheName) {
-		Jedis jedis = jedisPool.getResource();
-		String valueJson = jedis.get(cacheName);
-		jedisPool.returnResource(jedis);
+		String valueJson = null;
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			valueJson = jedis.get(cacheName);
+		} catch (Exception e) {
+			logger.error("Redis Error", e);
+			throw e;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
 		return valueJson;
 	}
 
@@ -64,9 +93,18 @@ public class RedisCacheDao implements CacheDao {
 	 * @return
 	 */
 	public long remove(String... cacheNames) {
-		Jedis jedis = jedisPool.getResource();
-		Long count = jedis.del(cacheNames);
-		jedisPool.returnResource(jedis);
+		Jedis jedis = null;
+		Long count = null;
+		try {
+			jedis = jedisPool.getResource();
+			count = jedis.del(cacheNames);
+		} catch (Exception e) {
+			logger.error("Redis Error", e);
+			throw e;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
 		return count == null ? 0 : count.longValue();
 	}
 }
