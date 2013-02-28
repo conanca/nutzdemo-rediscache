@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.nutz.ioc.impl.PropertiesProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -14,7 +12,6 @@ import redis.clients.jedis.JedisPool;
 import com.dolplay.nutzrc.common.cache.Order;
 
 public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCacheDao {
-	private static Logger logger = LoggerFactory.getLogger(RedisAdvancedCacheDao.class);
 
 	public RedisAdvancedCacheDao(PropertiesProxy config, JedisPool jedisPool) {
 		super(config, jedisPool);
@@ -32,7 +29,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 			jedis = jedisPool.getResource();
 			jedis.zadd(cacheName, score, item);
 		} catch (Exception e) {
-			logger.error("Redis Error", e);
 			throw e;
 		} finally {
 			if (jedis != null)
@@ -115,7 +111,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 			jedis = jedisPool.getResource();
 			jedis.zrem(cacheName, items);
 		} catch (Exception e) {
-			logger.error("Redis Error", e);
 			throw e;
 		} finally {
 			if (jedis != null)
@@ -135,7 +130,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 			jedis = jedisPool.getResource();
 			jedis.zremrangeByRank(cacheName, startIndex, endIndex);
 		} catch (Exception e) {
-			logger.error("Redis Error", e);
 			throw e;
 		} finally {
 			if (jedis != null)
@@ -155,7 +149,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 			jedis = jedisPool.getResource();
 			jedis.zremrangeByScore(cacheName, minScore, maxScore);
 		} catch (Exception e) {
-			logger.error("Redis Error", e);
 			throw e;
 		} finally {
 			if (jedis != null)

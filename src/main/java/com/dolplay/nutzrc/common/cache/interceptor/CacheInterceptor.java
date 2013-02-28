@@ -59,7 +59,12 @@ public class CacheInterceptor implements MethodInterceptor {
 			logger.debug("Cache name : " + cacheName);
 
 			// 获取该方法欲读取的缓存的 VALUE
-			String cacheValue = cacheDao.get(cacheName);
+			String cacheValue = null;
+			try {
+				cacheValue = cacheDao.get(cacheName);
+			} catch (Exception e) {
+				logger.error("Read Cache error", e);
+			}
 			// 若缓存值不为空，则该方法直接返回缓存里相应的值
 			if (cacheValue != null) {
 				chain.setReturnValue(Json.fromJson(method.getReturnType(), cacheValue));
@@ -73,8 +78,12 @@ public class CacheInterceptor implements MethodInterceptor {
 			// 获取方法返回值并增加相应缓存
 			Object returnObj = chain.getReturn();
 			if (returnObj != null) {
-				cacheDao.set(cacheName, returnObj);
-				logger.debug("Set a new value for this cache");
+				try {
+					cacheDao.set(cacheName, returnObj);
+					logger.debug("Set a new value for this cache");
+				} catch (Exception e) {
+					logger.error("Set cache error", e);
+				}
 			} else {
 				logger.warn("No value to set for this cache");
 			}

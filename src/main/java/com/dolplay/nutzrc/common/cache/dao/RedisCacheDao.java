@@ -2,8 +2,6 @@ package com.dolplay.nutzrc.common.cache.dao;
 
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.json.Json;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -11,8 +9,6 @@ import redis.clients.jedis.JedisPool;
 import com.dolplay.nutzrc.common.cache.CacheConfig;
 
 public class RedisCacheDao implements CacheDao {
-	private static Logger logger = LoggerFactory.getLogger(RedisCacheDao.class);
-
 	private PropertiesProxy config;
 	protected JedisPool jedisPool;
 
@@ -33,7 +29,6 @@ public class RedisCacheDao implements CacheDao {
 			jedis.setex(cacheName, config.getInt("CACHE_TIMEOUT", CacheConfig.DEFAULT_CACHE_TIMEOUT),
 					Json.toJson(cacheValue));
 		} catch (Exception e) {
-			logger.error("Redis Error", e);
 			throw e;
 		} finally {
 			if (jedis != null)
@@ -58,7 +53,6 @@ public class RedisCacheDao implements CacheDao {
 				jedis.setex(cacheName, timeout, Json.toJson(cacheValue));
 			}
 		} catch (Exception e) {
-			logger.error("Redis Error", e);
 			throw e;
 		} finally {
 			if (jedis != null)
@@ -78,7 +72,6 @@ public class RedisCacheDao implements CacheDao {
 			jedis = jedisPool.getResource();
 			valueJson = jedis.get(cacheName);
 		} catch (Exception e) {
-			logger.error("Redis Error", e);
 			throw e;
 		} finally {
 			if (jedis != null)
@@ -99,7 +92,6 @@ public class RedisCacheDao implements CacheDao {
 			jedis = jedisPool.getResource();
 			count = jedis.del(cacheNames);
 		} catch (Exception e) {
-			logger.error("Redis Error", e);
 			throw e;
 		} finally {
 			if (jedis != null)

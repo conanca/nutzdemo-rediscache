@@ -66,7 +66,12 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 			CacheType cacheType = cacheAn.cacheType();
 			if (cacheType.equals(CacheType.String)) {
 				// 获取该方法欲读取的缓存的 VALUE
-				String cacheValue = cacheDao.get(cacheName);
+				String cacheValue = null;
+				try {
+					cacheValue = cacheDao.get(cacheName);
+				} catch (Exception e) {
+					logger.error("Read Cache error", e);
+				}
 				// 若缓存值不为空，则该方法直接返回缓存里相应的值
 				if (cacheValue != null) {
 					chain.setReturnValue(Json.fromJson(method.getReturnType(), cacheValue));
@@ -80,14 +85,23 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 				// 获取方法返回值并增加相应缓存
 				Object returnObj = chain.getReturn();
 				if (returnObj != null) {
-					cacheDao.set(cacheName, returnObj);
-					logger.debug("Set a new value for this cache");
+					try {
+						cacheDao.set(cacheName, returnObj);
+						logger.debug("Set a new value for this cache");
+					} catch (Exception e) {
+						logger.error("Set cache error", e);
+					}
 				} else {
 					logger.warn("No value to set for this cache");
 				}
 			} else if (cacheType.equals(CacheType.List)) {
 				// 获取该方法欲读取的缓存的 VALUE
-				List<String> cacheValue = cacheDao.zQueryByRank(cacheName, 0, -1, Order.Asc);
+				List<String> cacheValue = null;
+				try {
+					cacheValue = cacheDao.zQueryByRank(cacheName, 0, -1, Order.Asc);
+				} catch (Exception e) {
+					logger.error("Read Cache error", e);
+				}
 				// 若缓存值不为空，则该方法直接返回缓存里相应的值
 				if (cacheValue != null && cacheValue.size() > 0) {
 					chain.setReturnValue(cacheValue);
@@ -102,10 +116,14 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 				@SuppressWarnings("unchecked")
 				List<String> returnObj = (List<String>) chain.getReturn();
 				if (returnObj != null) {
-					for (String item : returnObj) {
-						cacheDao.zAdd(cacheName, (new Date()).getTime(), item);
+					try {
+						for (String item : returnObj) {
+							cacheDao.zAdd(cacheName, (new Date()).getTime(), item);
+						}
+						logger.debug("Set a new value for this cache");
+					} catch (Exception e) {
+						logger.error("Set cache error", e);
 					}
-					logger.debug("Set a new value for this cache");
 				} else {
 					logger.warn("No value to set for this cache");
 				}
@@ -113,7 +131,6 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 				logger.error("The method annotation : CacheType Error!", new RuntimeException(
 						"The method annotation : CacheType Error"));
 			}
-
 		} else {
 			// 执行方法
 			chain.doChain();
