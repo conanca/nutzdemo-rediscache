@@ -10,6 +10,7 @@ import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 
+import com.dolplay.nutzrc.common.cache.CStrings;
 import com.dolplay.nutzrc.common.cache.Cache;
 import com.dolplay.nutzrc.common.cache.CacheName;
 import com.dolplay.nutzrc.common.cache.CacheNameSuffix;
@@ -75,7 +76,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	public void update(int id, User user) {
 		dao().update(user);
 		// 立即更新缓存
-		cacheDao().set(CacheName.SYSTEM_USER + ":" + id, user);
+		cacheDao().set(CStrings.cacheName(CacheName.SYSTEM_USER, id), user);
 	}
 
 	/**
@@ -85,7 +86,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	public void remove(int id) {
 		delete(id);
 		// 立即删除缓存
-		cacheDao().remove(CacheName.SYSTEM_USER + ":" + id);
+		cacheDao().remove(CStrings.cacheName(CacheName.SYSTEM_USER, id));
 	}
 
 	/**
@@ -108,7 +109,8 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 
 	public List<String> oldUserListId() throws ParseException {
 		List<String> idList = null;
-		idList = cacheDao().zQueryByRank(CacheName.SYSTEM_OLDUSERS_IDLIST + ":" + MARKDATE, 0, -1, Order.Asc);
+		idList = cacheDao().zQueryByRank(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), 0, -1,
+				Order.Asc);
 		if (idList == null || idList.size() == 0) {
 			List<User> oldUserList = query(
 					Cnd.where("birthday", "<=", new SimpleDateFormat("yyyy-MM-dd").parse(MARKDATE)).asc("birthday"),
@@ -117,7 +119,8 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 			for (User u : oldUserList) {
 				String uId = String.valueOf(u.getId());
 				idList.add(uId);
-				cacheDao().zAdd(CacheName.SYSTEM_OLDUSERS_IDLIST + ":" + MARKDATE, u.getBirthday().getTime(), uId);
+				cacheDao().zAdd(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE),
+						u.getBirthday().getTime(), uId);
 			}
 		}
 		return idList;
@@ -125,12 +128,12 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 
 	public void insertAndUpdateCache(User user) {
 		dao().insert(user);
-		cacheDao().zAdd(CacheName.SYSTEM_OLDUSERS_IDLIST + ":" + MARKDATE, user.getBirthday().getTime(),
+		cacheDao().zAdd(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), user.getBirthday().getTime(),
 				String.valueOf(user.getId()));
 	}
 
 	public void deleteAndUpdateCache(User user) {
 		dao().delete(user);
-		cacheDao().zDel(CacheName.SYSTEM_OLDUSERS_IDLIST + ":" + MARKDATE, String.valueOf(user.getId()));
+		cacheDao().zDel(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), String.valueOf(user.getId()));
 	}
 }

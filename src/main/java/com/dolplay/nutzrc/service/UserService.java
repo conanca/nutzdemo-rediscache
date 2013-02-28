@@ -11,6 +11,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import com.dolplay.nutzrc.common.cache.Cache;
 import com.dolplay.nutzrc.common.cache.CacheName;
 import com.dolplay.nutzrc.common.cache.CacheNameSuffix;
+import com.dolplay.nutzrc.common.cache.CStrings;
 import com.dolplay.nutzrc.common.cache.dao.CacheDao;
 import com.dolplay.nutzrc.common.cache.service.CacheIdEntityService;
 import com.dolplay.nutzrc.domain.User;
@@ -79,7 +80,7 @@ public class UserService extends CacheIdEntityService<User> {
 	public void update(int id, User user) {
 		dao().update(user);
 		// 立即更新缓存
-		cacheDao().set(CacheName.SYSTEM_USER + ":" + id, user);
+		cacheDao().set(CStrings.cacheName(CacheName.SYSTEM_USER, id), user);
 	}
 
 	/**
@@ -89,7 +90,7 @@ public class UserService extends CacheIdEntityService<User> {
 	public void remove(int id) {
 		delete(id);
 		// 立即删除缓存
-		cacheDao().remove(CacheName.SYSTEM_USER + ":" + id);
+		cacheDao().remove(CStrings.cacheName(CacheName.SYSTEM_USER, id));
 	}
 
 	/**
