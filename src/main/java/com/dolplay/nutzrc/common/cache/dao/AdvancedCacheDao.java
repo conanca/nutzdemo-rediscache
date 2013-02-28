@@ -4,6 +4,11 @@ import java.util.List;
 
 import com.dolplay.nutzrc.common.cache.Order;
 
+/**
+ * 高级缓存DAO，可操作有序集缓存
+ * @author conanca
+ *
+ */
 public interface AdvancedCacheDao extends CacheDao {
 	/**
 	 * 为有序集缓存的值增添一个成员，需指定该成员的score

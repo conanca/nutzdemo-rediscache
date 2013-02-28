@@ -24,6 +24,10 @@ public @interface Cache {
 	 */
 	public String cacheNamePrefix() default "";
 
+	/**
+	 * 指明缓存类型。根据类型不同，可缓存字符串值和有序集合值
+	 * @return
+	 */
 	public CacheType cacheType() default CacheType.String;
 
 }

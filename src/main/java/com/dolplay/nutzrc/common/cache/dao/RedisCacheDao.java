@@ -8,6 +8,11 @@ import redis.clients.jedis.JedisPool;
 
 import com.dolplay.nutzrc.common.cache.CacheConfig;
 
+/**
+ * Redis实现的缓存DAO，注意处理异常
+ * @author conanca
+ *
+ */
 public class RedisCacheDao implements CacheDao {
 	private PropertiesProxy config;
 	protected JedisPool jedisPool;

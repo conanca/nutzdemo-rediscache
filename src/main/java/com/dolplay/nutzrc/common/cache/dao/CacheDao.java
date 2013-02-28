@@ -1,5 +1,10 @@
 package com.dolplay.nutzrc.common.cache.dao;
 
+/**
+ * 缓存DAO，用于操作缓存
+ * @author conanca
+ *
+ */
 public interface CacheDao {
 	/**
 	 * 增加一个缓存，如果存在将更新该缓存。注：缓存超时时间由配置文件配置

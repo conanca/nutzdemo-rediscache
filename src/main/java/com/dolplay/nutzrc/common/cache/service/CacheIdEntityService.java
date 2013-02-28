@@ -5,6 +5,12 @@ import org.nutz.service.IdEntityService;
 
 import com.dolplay.nutzrc.common.cache.dao.CacheDao;
 
+/**
+ * 提供缓存操作的Service基类
+ * @author conanca
+ *
+ * @param <T>
+ */
 public class CacheIdEntityService<T> extends IdEntityService<T> implements CacheService {
 	private CacheDao cacheDao;
 

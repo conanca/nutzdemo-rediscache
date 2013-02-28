@@ -21,7 +21,7 @@ import com.dolplay.nutzrc.common.cache.dao.AdvancedCacheDao;
 
 /**
  * @author Conanca
- * 实现缓存预先读取的方法拦截器
+ * 实现缓存预先读取及缓存自动设值的方法拦截器，支持普通类型缓存和有序集型缓存
  */
 public class AdvancedCacheInterceptor implements MethodInterceptor {
 	private static Logger logger = LoggerFactory.getLogger(AdvancedCacheInterceptor.class);
