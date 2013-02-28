@@ -10,7 +10,7 @@ import org.nutz.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dolplay.nutzrc.common.cache.CacheConfig;
+import com.dolplay.nutzrc.common.cache.CStrings;
 import com.dolplay.nutzrc.common.cache.annotation.Cache;
 import com.dolplay.nutzrc.common.cache.annotation.CacheNameSuffix;
 import com.dolplay.nutzrc.common.cache.dao.CacheDao;
@@ -47,14 +47,7 @@ public class CacheInterceptor implements MethodInterceptor {
 					}
 				}
 			}
-			StringBuilder cacheNameSb = new StringBuilder(cacheNamePrefix);
-			for (String cacahePara : cacheParaArr) {
-				if (cacahePara != null) {
-					cacheNameSb.append(CacheConfig.CACHENAME_DELIMITER);
-					cacheNameSb.append(cacahePara);
-				}
-			}
-			String cacheName = cacheNameSb.toString();
+			String cacheName = CStrings.cacheName(cacheNamePrefix, cacheParaArr);
 			logger.debug("Cache name : " + cacheName);
 
 			// 获取该方法欲读取的缓存的 VALUE

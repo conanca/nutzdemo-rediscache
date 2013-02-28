@@ -36,7 +36,6 @@ public class CStrings {
 	 * @return
 	 */
 	public static String cacheName(String cacheNamePrefix, String... cacheNameSuffixs) {
-		String cacheName = null;
 		StringBuilder sb = new StringBuilder(cacheNamePrefix);
 		if (cacheNameSuffixs != null && cacheNameSuffixs.length > 0) {
 			for (String cacheNameSuffix : cacheNameSuffixs) {
@@ -46,7 +45,7 @@ public class CStrings {
 				}
 			}
 		}
-		return cacheName;
+		return sb.toString();
 	}
 
 	/**
@@ -56,7 +55,6 @@ public class CStrings {
 	 * @return
 	 */
 	public static String cacheName(String cacheNamePrefix, int... cacheNameSuffixs) {
-		String cacheName = null;
 		StringBuilder sb = new StringBuilder(cacheNamePrefix);
 		if (cacheNameSuffixs != null && cacheNameSuffixs.length > 0) {
 			for (int cacheNameSuffix : cacheNameSuffixs) {
@@ -64,7 +62,7 @@ public class CStrings {
 				sb.append(cacheNameSuffix);
 			}
 		}
-		return cacheName;
+		return sb.toString();
 	}
 
 	/**
@@ -74,7 +72,6 @@ public class CStrings {
 	 * @return
 	 */
 	public static String cacheName(String cacheNamePrefix, long... cacheNameSuffixs) {
-		String cacheName = null;
 		StringBuilder sb = new StringBuilder(cacheNamePrefix);
 		if (cacheNameSuffixs != null && cacheNameSuffixs.length > 0) {
 			for (long cacheNameSuffix : cacheNameSuffixs) {
@@ -82,6 +79,6 @@ public class CStrings {
 				sb.append(cacheNameSuffix);
 			}
 		}
-		return cacheName;
+		return sb.toString();
 	}
 }

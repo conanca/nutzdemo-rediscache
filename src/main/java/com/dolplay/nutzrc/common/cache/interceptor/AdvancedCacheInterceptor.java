@@ -12,7 +12,7 @@ import org.nutz.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dolplay.nutzrc.common.cache.CacheConfig;
+import com.dolplay.nutzrc.common.cache.CStrings;
 import com.dolplay.nutzrc.common.cache.CacheType;
 import com.dolplay.nutzrc.common.cache.Order;
 import com.dolplay.nutzrc.common.cache.annotation.Cache;
@@ -51,14 +51,7 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 					}
 				}
 			}
-			StringBuilder cacheNameSb = new StringBuilder(cacheNamePrefix);
-			for (String cacahePara : cacheParaArr) {
-				if (cacahePara != null) {
-					cacheNameSb.append(CacheConfig.CACHENAME_DELIMITER);
-					cacheNameSb.append(cacahePara);
-				}
-			}
-			String cacheName = cacheNameSb.toString();
+			String cacheName = CStrings.cacheName(cacheNamePrefix, cacheParaArr);
 			logger.debug("Cache name : " + cacheName);
 
 			// 获取缓存类型，根据缓存类型不同分别对缓存有不同的操作方式
