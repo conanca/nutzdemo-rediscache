@@ -40,7 +40,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 * 注: 方法必须有返回值,该值对应上述缓存的value
 	 * @return
 	 */
-	@Aop("cacheInterceptor")
+	@Aop("advancedCacheInterceptor")
 	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS)
 	public List<User> list() {
 		return query(null, null);
@@ -53,7 +53,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 * @param id
 	 * @return
 	 */
-	@Aop("cacheInterceptor")
+	@Aop("advancedCacheInterceptor")
 	@Cache(cacheNamePrefix = CacheName.SYSTEM_USER)
 	public User view(@CacheNameSuffix int id) {
 		return fetch(id);
