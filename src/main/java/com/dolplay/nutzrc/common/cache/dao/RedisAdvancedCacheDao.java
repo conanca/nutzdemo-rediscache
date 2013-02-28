@@ -12,7 +12,7 @@ import redis.clients.jedis.JedisPool;
 import com.dolplay.nutzrc.common.cache.Order;
 
 /**
- * Redis实现的高级缓存DAO，使用时注意处理异常
+ * Redis实现的高级缓存DAO
  * @author conanca
  *
  */
