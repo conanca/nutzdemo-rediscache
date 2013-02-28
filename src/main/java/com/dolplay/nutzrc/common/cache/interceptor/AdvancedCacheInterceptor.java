@@ -12,11 +12,11 @@ import org.nutz.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dolplay.nutzrc.common.cache.Cache;
 import com.dolplay.nutzrc.common.cache.CacheConfig;
-import com.dolplay.nutzrc.common.cache.CacheNameSuffix;
 import com.dolplay.nutzrc.common.cache.CacheType;
 import com.dolplay.nutzrc.common.cache.Order;
+import com.dolplay.nutzrc.common.cache.annotation.Cache;
+import com.dolplay.nutzrc.common.cache.annotation.CacheNameSuffix;
 import com.dolplay.nutzrc.common.cache.dao.AdvancedCacheDao;
 
 /**
@@ -29,7 +29,6 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 	private AdvancedCacheDao cacheDao;
 
 	public void filter(InterceptorChain chain) throws Throwable {
-
 		// 取得被拦截的方法及其注解
 		Method method = chain.getCallingMethod();
 		Cache cacheAn = method.getAnnotation(Cache.class);

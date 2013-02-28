@@ -8,10 +8,10 @@ import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 
-import com.dolplay.nutzrc.common.cache.Cache;
 import com.dolplay.nutzrc.common.cache.CacheName;
-import com.dolplay.nutzrc.common.cache.CacheNameSuffix;
 import com.dolplay.nutzrc.common.cache.CStrings;
+import com.dolplay.nutzrc.common.cache.annotation.Cache;
+import com.dolplay.nutzrc.common.cache.annotation.CacheNameSuffix;
 import com.dolplay.nutzrc.common.cache.dao.CacheDao;
 import com.dolplay.nutzrc.common.cache.service.CacheIdEntityService;
 import com.dolplay.nutzrc.domain.User;
