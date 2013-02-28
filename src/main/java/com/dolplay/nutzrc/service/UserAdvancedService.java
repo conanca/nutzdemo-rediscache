@@ -14,6 +14,7 @@ import com.dolplay.nutzrc.common.cache.CStrings;
 import com.dolplay.nutzrc.common.cache.Cache;
 import com.dolplay.nutzrc.common.cache.CacheName;
 import com.dolplay.nutzrc.common.cache.CacheNameSuffix;
+import com.dolplay.nutzrc.common.cache.CacheType;
 import com.dolplay.nutzrc.common.cache.Order;
 import com.dolplay.nutzrc.common.cache.dao.AdvancedCacheDao;
 import com.dolplay.nutzrc.common.cache.service.AdvancedCacheIdEntityService;
@@ -97,7 +98,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	}
 
 	@Aop("advancedCacheInterceptor")
-	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS_IDLIST)
+	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS_IDLIST, cacheType = CacheType.List)
 	public List<String> listIdByGender(@CacheNameSuffix String gender) {
 		List<User> userList = query(Cnd.where("gender", "=", gender), null);
 		List<String> idList = new ArrayList<String>();
