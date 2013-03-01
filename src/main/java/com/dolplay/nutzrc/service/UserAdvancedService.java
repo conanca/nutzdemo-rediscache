@@ -100,7 +100,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	/**
 	 * 手动删除全部用户列表缓存
 	 */
-	public void delCacheForTest() {
+	public void delAllUsersCache() {
 		cacheDao().remove(CacheName.SYSTEM_ALLUSERS);
 	}
 

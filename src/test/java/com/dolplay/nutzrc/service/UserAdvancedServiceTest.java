@@ -77,7 +77,8 @@ public class UserAdvancedServiceTest {
 		logger.info("第三次执行list方法...");
 		users = userService.list();
 		logger.info("userlist个数：" + users.size());
-		userService.delCacheForTest();
+		logger.info("清除ALLUSERS缓存");
+		userService.delAllUsersCache();
 		logger.info("第四次执行list方法...");
 		users = userService.list();
 		logger.info("userlist个数：" + users.size());
