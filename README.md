@@ -3,7 +3,11 @@ nutzdemo-rediscache
 
 ## Description
 
-演示使用redis作为应用的缓存——通过nutz.Aop的拦截器实现
+本项目演示了一个应用如何通过nutz.Aop实现使用redis作为数据库的缓存
+
+* 提供了一个缓存预先读取及缓存自动设值的方法拦截器，用于数据库读取的方法
+* 提供了用于手动操作缓存的CacheDao
+* 支持普通类型缓存和有序集型缓存(注意：有序集缓存都是永久缓存)
 
 ## Example
 
