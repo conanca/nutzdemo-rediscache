@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
+import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 
@@ -44,6 +45,12 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS)
 	public List<User> list() {
 		return query(null, null);
+	}
+
+	@Aop("advancedCacheInterceptor")
+	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS_INPAGE)
+	public List<User> listInPage(@CacheNameSuffix Pager pager) {
+		return query(null, pager);
 	}
 
 	/**

@@ -55,8 +55,15 @@ public class UserAdvancedServiceTest {
 		User user = userService.view(2);
 		logger.info(Json.toJson(user));
 
+		logger.info("第一次执行listInPage方法...");
+		List<User> users = userService.listInPage(userService.dao().createPager(1, 5));
+		logger.info("userlist个数：" + users.size());
+		logger.info("第二次执行listInPage方法...");
+		users = userService.listInPage(userService.dao().createPager(1, 5));
+		logger.info("userlist个数：" + users.size());
+
 		logger.info("第一次执行list方法...");
-		List<User> users = userService.list();
+		users = userService.list();
 		logger.info("userlist个数：" + users.size());
 		logger.info("第二次执行list方法...");
 		users = userService.list();
