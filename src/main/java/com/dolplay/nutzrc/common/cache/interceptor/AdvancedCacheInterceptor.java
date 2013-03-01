@@ -116,7 +116,8 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 				if (returnObj != null) {
 					try {
 						for (String item : returnObj) {
-							cacheDao.zAdd(cacheName, (new Date()).getTime(), item);
+							cacheDao.zAdd(cacheName, new Date().getTime(), item);
+							Thread.sleep(1);
 						}
 						logger.debug("Set a new value for this cache");
 					} catch (Exception e) {
