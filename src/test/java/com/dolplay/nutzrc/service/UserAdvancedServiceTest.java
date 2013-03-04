@@ -40,6 +40,8 @@ public class UserAdvancedServiceTest {
 		JedisPool pool = ioc.get(JedisPool.class, "jedisPool");
 		Jedis jedis = pool.getResource();
 		jedis.flushDB();
+		jedis.select(1);
+		jedis.flushDB();
 		pool.returnResource(jedis);
 	}
 

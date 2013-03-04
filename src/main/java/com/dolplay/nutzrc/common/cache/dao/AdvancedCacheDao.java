@@ -10,8 +10,20 @@ import com.dolplay.nutzrc.common.cache.Order;
  *
  */
 public interface AdvancedCacheDao extends CacheDao {
+
+	/**
+	 * 为有序集缓存的值增添一个成员，需指定该成员的score。
+	 * 如果缓存不存在则创建这个缓存，并指定缓存超时时间；如果超时时间小于等于0，则为永久缓存
+	 * @param cacheName
+	 * @param seconds
+	 * @param score
+	 * @param item
+	 */
+	public void zAdd(String cacheName, int seconds, double score, String item);
+
 	/**
 	 * 为有序集缓存的值增添一个成员，需指定该成员的score
+	 * 如果缓存不存在则创建这个缓存，注：缓存超时时间由配置文件配置
 	 * @param cacheName
 	 * @param score
 	 * @param item

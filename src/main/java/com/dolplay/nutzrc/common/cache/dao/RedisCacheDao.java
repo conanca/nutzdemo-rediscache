@@ -14,7 +14,7 @@ import com.dolplay.nutzrc.common.cache.CacheConfig;
  *
  */
 public class RedisCacheDao implements CacheDao {
-	private PropertiesProxy config;
+	protected PropertiesProxy config;
 	protected JedisPool jedisPool;
 
 	public RedisCacheDao(PropertiesProxy config, JedisPool jedisPool) {
@@ -28,18 +28,8 @@ public class RedisCacheDao implements CacheDao {
 	 * @param cacheValue
 	 */
 	public void set(String cacheName, Object cacheValue) {
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			jedis.setex(cacheName, config.getInt("CACHE_TIMEOUT", CacheConfig.DEFAULT_CACHE_TIMEOUT),
-					Json.toJson(cacheValue));
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			if (jedis != null)
-				jedisPool.returnResource(jedis);
-		}
-
+		int timeout = config.getInt("STANDARD_CACHE_TIMEOUT", CacheConfig.DEFAULT_STANDARD_CACHE_TIMEOUT);
+		set(cacheName, timeout, cacheValue);
 	}
 
 	/**
@@ -52,6 +42,8 @@ public class RedisCacheDao implements CacheDao {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(config.getInt("STANDARD_CACHE_REDIS_DATABASE_INDEX",
+					CacheConfig.DEFAULT_STANDARD_CACHE_REDIS_DATABASE_INDEX));
 			if (timeout <= 0) {
 				jedis.set(cacheName, Json.toJson(cacheValue));
 			} else {
@@ -75,6 +67,8 @@ public class RedisCacheDao implements CacheDao {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(config.getInt("STANDARD_CACHE_REDIS_DATABASE_INDEX",
+					CacheConfig.DEFAULT_STANDARD_CACHE_REDIS_DATABASE_INDEX));
 			valueJson = jedis.get(cacheName);
 		} catch (Exception e) {
 			throw e;
@@ -95,6 +89,8 @@ public class RedisCacheDao implements CacheDao {
 		Long count = null;
 		try {
 			jedis = jedisPool.getResource();
+			jedis.select(config.getInt("STANDARD_CACHE_REDIS_DATABASE_INDEX",
+					CacheConfig.DEFAULT_STANDARD_CACHE_REDIS_DATABASE_INDEX));
 			count = jedis.del(cacheNames);
 		} catch (Exception e) {
 			throw e;
@@ -103,5 +99,28 @@ public class RedisCacheDao implements CacheDao {
 				jedisPool.returnResource(jedis);
 		}
 		return count == null ? 0 : count.longValue();
+	}
+
+	/**
+	 * 为给定缓存设置生存时间，当缓存 过期时(生存时间为 0 )，它会被自动删除
+	 * @param cacheName
+	 * @param seconds
+	 * @return
+	 */
+	public boolean expire(String cacheName, int seconds) {
+		Jedis jedis = null;
+		long success = 0;
+		try {
+			jedis = jedisPool.getResource();
+			jedis.select(config.getInt("STANDARD_CACHE_REDIS_DATABASE_INDEX",
+					CacheConfig.DEFAULT_STANDARD_CACHE_REDIS_DATABASE_INDEX));
+			success = jedis.expire(cacheName, seconds);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return success == 1 ? true : false;
 	}
 }
