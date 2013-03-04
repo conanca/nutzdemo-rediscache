@@ -10,6 +10,8 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dolplay.nutzrc.common.cache.CStrings;
 import com.dolplay.nutzrc.common.cache.CacheName;
@@ -28,6 +30,7 @@ import com.dolplay.nutzrc.domain.User;
  */
 @IocBean(args = { "refer:dao", "refer:advancedCacheDao" })
 public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
+	private static Logger logger = LoggerFactory.getLogger(UserAdvancedService.class);
 
 	private static final String MARKDATE = "2007-01-01";
 
@@ -84,6 +87,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	public void update(int id, User user) {
 		dao().update(user);
 		// 立即更新缓存
+		logger.debug("立即更新缓存:" + CStrings.cacheName(CacheName.SYSTEM_USER, id));
 		cacheDao().set(CStrings.cacheName(CacheName.SYSTEM_USER, id), user);
 	}
 
