@@ -8,6 +8,7 @@ import java.util.List;
 import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
 import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
 import org.nutz.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 							} else if (CharSequence.class.isAssignableFrom(args[i].getClass())) {
 								cacheParaArr[k] = args[i].toString();
 							} else {
-								cacheParaArr[k] = Json.toJson(args[i]);
+								cacheParaArr[k] = Json.toJson(args[i], JsonFormat.compact().setQuoteName(false));
 							}
 							k++;
 						}
