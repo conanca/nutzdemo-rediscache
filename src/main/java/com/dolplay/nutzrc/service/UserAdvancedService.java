@@ -131,7 +131,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 			for (User u : oldUserList) {
 				String uId = String.valueOf(u.getId());
 				idList.add(uId);
-				cacheDao().zAdd(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE),
+				cacheDao().zAdd(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), -1,
 						u.getBirthday().getTime(), uId);
 			}
 		}
@@ -140,8 +140,8 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 
 	public void insertAndUpdateCache(User user) {
 		dao().insert(user);
-		cacheDao().zAdd(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), user.getBirthday().getTime(),
-				String.valueOf(user.getId()));
+		cacheDao().zAdd(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), -1,
+				user.getBirthday().getTime(), String.valueOf(user.getId()));
 	}
 
 	public void deleteAndUpdateCache(User user) {
