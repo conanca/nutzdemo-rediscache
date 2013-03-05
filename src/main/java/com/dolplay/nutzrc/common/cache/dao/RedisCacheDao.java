@@ -42,8 +42,6 @@ public class RedisCacheDao implements CacheDao {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("STANDARD_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_STANDARD_CACHE_REDIS_DATABASE_INDEX));
 			if (timeout <= 0) {
 				jedis.set(cacheName, Json.toJson(cacheValue));
 			} else {
@@ -67,8 +65,6 @@ public class RedisCacheDao implements CacheDao {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("STANDARD_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_STANDARD_CACHE_REDIS_DATABASE_INDEX));
 			valueJson = jedis.get(cacheName);
 		} catch (Exception e) {
 			throw e;
@@ -89,8 +85,6 @@ public class RedisCacheDao implements CacheDao {
 		Long count = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("STANDARD_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_STANDARD_CACHE_REDIS_DATABASE_INDEX));
 			count = jedis.del(cacheNames);
 		} catch (Exception e) {
 			throw e;
@@ -112,8 +106,6 @@ public class RedisCacheDao implements CacheDao {
 		long success = 0;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("STANDARD_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_STANDARD_CACHE_REDIS_DATABASE_INDEX));
 			success = jedis.expire(cacheName, seconds);
 		} catch (Exception e) {
 			throw e;

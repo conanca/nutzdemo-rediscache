@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.nutz.ioc.impl.PropertiesProxy;
-import org.nutz.lang.Strings;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -36,8 +35,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("LIST_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_LIST_CACHE_REDIS_DATABASE_INDEX));
 			boolean isNew = !jedis.exists(cacheName);
 			jedis.zadd(cacheName, score, item);
 			if (isNew && seconds > 0) {
@@ -78,8 +75,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		List<String> valueList = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("LIST_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_LIST_CACHE_REDIS_DATABASE_INDEX));
 			Set<String> valueSet = null;
 			if (order.equals(Order.Asc)) {
 				valueSet = jedis.zrange(cacheName, startIndex, endIndex);
@@ -112,8 +107,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		List<String> valueList = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("LIST_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_LIST_CACHE_REDIS_DATABASE_INDEX));
 			Set<String> valueSet = null;
 			if (order.equals(Order.Asc)) {
 				valueSet = jedis.zrangeByScore(cacheName, minScore, maxScore);
@@ -140,8 +133,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("LIST_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_LIST_CACHE_REDIS_DATABASE_INDEX));
 			jedis.zrem(cacheName, items);
 		} catch (Exception e) {
 			throw e;
@@ -161,8 +152,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("LIST_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_LIST_CACHE_REDIS_DATABASE_INDEX));
 			jedis.zremrangeByRank(cacheName, startIndex, endIndex);
 		} catch (Exception e) {
 			throw e;
@@ -182,8 +171,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.select(config.getInt("LIST_CACHE_REDIS_DATABASE_INDEX",
-					CacheConfig.DEFAULT_LIST_CACHE_REDIS_DATABASE_INDEX));
 			jedis.zremrangeByScore(cacheName, minScore, maxScore);
 		} catch (Exception e) {
 			throw e;
@@ -204,14 +191,6 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		long success = 0;
 		try {
 			jedis = jedisPool.getResource();
-			String cacheType = jedis.type(cacheName);
-			if (!Strings.isEmpty(cacheType) && cacheType.equals("zset")) {
-				jedis.select(config.getInt("LIST_CACHE_REDIS_DATABASE_INDEX",
-						CacheConfig.DEFAULT_LIST_CACHE_REDIS_DATABASE_INDEX));
-			} else {
-				jedis.select(config.getInt("STANDARD_CACHE_REDIS_DATABASE_INDEX",
-						CacheConfig.DEFAULT_STANDARD_CACHE_REDIS_DATABASE_INDEX));
-			}
 			success = jedis.expire(cacheName, seconds);
 		} catch (Exception e) {
 			throw e;

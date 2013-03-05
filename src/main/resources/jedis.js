@@ -20,8 +20,11 @@ var ioc = {
 		    {
 				refer : 'jedisPoolConfig'
 			},
-			'127.0.0.1',
-			6379
+			'127.0.0.1',		// host
+			6379,				// port
+			2000,				// timeout
+			null,				// password
+			0						// database number
 		]
 	}
 };
