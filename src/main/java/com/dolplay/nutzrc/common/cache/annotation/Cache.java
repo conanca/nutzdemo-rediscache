@@ -19,7 +19,7 @@ import com.dolplay.nutzrc.common.cache.CacheType;
 public @interface Cache {
 
 	/**
-	 * 指明读取哪个缓存
+	 * 指明预读取/设置哪个缓存
 	 * @return
 	 */
 	public String cacheNamePrefix() default "";
@@ -29,5 +29,12 @@ public @interface Cache {
 	 * @return
 	 */
 	public CacheType cacheType() default CacheType.String;
+
+	/**
+	 * 指明缓存超时时间，超过这个时间该缓存将被删除。
+	 * 缺省则使用配置文件中的相应配置
+	 * @return
+	 */
+	public int cacheTimeout() default -1;
 
 }

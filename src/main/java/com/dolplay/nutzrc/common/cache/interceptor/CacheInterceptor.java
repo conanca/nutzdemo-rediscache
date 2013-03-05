@@ -56,6 +56,8 @@ public class CacheInterceptor implements MethodInterceptor {
 			String cacheName = CStrings.cacheName(cacheNamePrefix, cacheParaArr);
 			logger.debug("Cache name : " + cacheName);
 
+			// 获取缓存超时时间
+			int cacheTimeout = cacheAn.cacheTimeout();
 			// 获取该方法欲读取的缓存的 VALUE
 			String cacheValue = null;
 			try {
@@ -77,7 +79,12 @@ public class CacheInterceptor implements MethodInterceptor {
 			Object returnObj = chain.getReturn();
 			if (returnObj != null) {
 				try {
-					cacheDao.set(cacheName, returnObj);
+					//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
+					if (cacheTimeout > 0) {
+						cacheDao.set(cacheName, cacheTimeout, cacheValue);
+					} else {
+						cacheDao.set(cacheName, returnObj);
+					}
 					logger.debug("Set a new value for this cache");
 				} catch (Exception e) {
 					logger.error("Set cache error", e);

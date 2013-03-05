@@ -61,6 +61,8 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 			String cacheName = CStrings.cacheName(cacheNamePrefix, cacheParaArr);
 			logger.debug("Cache name : " + cacheName);
 
+			// 获取缓存超时时间
+			int cacheTimeout = cacheAn.cacheTimeout();
 			// 获取缓存类型，根据缓存类型不同分别对缓存有不同的操作方式
 			CacheType cacheType = cacheAn.cacheType();
 			if (cacheType.equals(CacheType.String)) {
@@ -85,7 +87,12 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 				Object returnObj = chain.getReturn();
 				if (returnObj != null) {
 					try {
-						cacheDao.set(cacheName, returnObj);
+						//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
+						if (cacheTimeout > 0) {
+							cacheDao.set(cacheName, cacheTimeout, cacheValue);
+						} else {
+							cacheDao.set(cacheName, returnObj);
+						}
 						logger.debug("Set a new value for this cache");
 					} catch (Exception e) {
 						logger.error("Set cache error", e);
@@ -116,9 +123,17 @@ public class AdvancedCacheInterceptor implements MethodInterceptor {
 				List<String> returnObj = (List<String>) chain.getReturn();
 				if (returnObj != null) {
 					try {
-						for (String item : returnObj) {
-							cacheDao.zAdd(cacheName, new Date().getTime(), item);
-							Thread.sleep(1);
+						//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
+						if (cacheTimeout > 0) {
+							for (String item : returnObj) {
+								cacheDao.zAdd(cacheName, cacheTimeout, new Date().getTime(), item);
+								Thread.sleep(1);
+							}
+						} else {
+							for (String item : returnObj) {
+								cacheDao.zAdd(cacheName, new Date().getTime(), item);
+								Thread.sleep(1);
+							}
 						}
 						logger.debug("Set a new value for this cache");
 					} catch (Exception e) {
