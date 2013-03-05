@@ -8,6 +8,7 @@ import org.nutz.aop.InterceptorChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dolplay.nutzrc.common.cache.CacheConfig;
 import com.dolplay.nutzrc.common.cache.CacheType;
 import com.dolplay.nutzrc.common.cache.Order;
 import com.dolplay.nutzrc.common.cache.annotation.Cache;
@@ -57,7 +58,7 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 			if (returnObj != null) {
 				try {
 					//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
-					if (cacheTimeout > 0) {
+					if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
 						for (String item : returnObj) {
 							cacheDao().zAdd(cacheName, cacheTimeout, new Date().getTime(), item);
 							Thread.sleep(1);

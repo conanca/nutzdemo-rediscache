@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dolplay.nutzrc.common.cache.CStrings;
+import com.dolplay.nutzrc.common.cache.CacheConfig;
 import com.dolplay.nutzrc.common.cache.annotation.Cache;
 import com.dolplay.nutzrc.common.cache.annotation.CacheNameSuffix;
 import com.dolplay.nutzrc.common.cache.dao.CacheDao;
@@ -119,7 +120,7 @@ public class CacheInterceptor implements MethodInterceptor {
 			int cacheTimeout = cacheAn.cacheTimeout();
 			try {
 				//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
-				if (cacheTimeout > 0) {
+				if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
 					cacheDao().set(cacheName, cacheTimeout, cacheValue);
 				} else {
 					cacheDao().set(cacheName, returnObj);

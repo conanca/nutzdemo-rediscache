@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.dolplay.nutzrc.common.cache.CacheConfig;
 import com.dolplay.nutzrc.common.cache.CacheType;
 
 /**
@@ -31,10 +32,10 @@ public @interface Cache {
 	public CacheType cacheType() default CacheType.String;
 
 	/**
-	 * 指明缓存超时时间，超过这个时间该缓存将被删除。
-	 * 缺省则使用配置文件中的相应配置
+	 * 指明缓存超时时间，超过这个时间该缓存将被删除。如果超时时间小于等于0，则为永久缓存。
+	 * 缺省则使用配置文件中所配置的超时时间
 	 * @return
 	 */
-	public int cacheTimeout() default -1;
+	public int cacheTimeout() default CacheConfig.INVALID_TIMEOUT;
 
 }
