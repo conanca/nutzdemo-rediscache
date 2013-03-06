@@ -1,5 +1,7 @@
 package com.dolplay.nutzrc.common.cache.dao;
 
+import java.util.Set;
+
 /**
  * 缓存DAO，用于操作缓存
  * @author conanca
@@ -42,4 +44,25 @@ public interface CacheDao {
 	 * @return
 	 */
 	public boolean expire(String cacheName, int seconds);
+
+	/**
+	 * 判断给定 key 是否存在
+	 * @param cacheName
+	 * @return
+	 */
+	public boolean exists(String cacheName);
+
+	/**
+	 * 查找所有符合给定模式 pattern 的 key
+	 * 
+	 * KEYS * 匹配数据库中所有 key 。
+	 * KEYS h?llo 匹配 hello ， hallo 和 hxllo 等。
+	 * KEYS h*llo 匹配 hllo 和 heeeeello 等。
+	 * KEYS h[ae]llo 匹配 hello 和 hallo ，但不匹配 hillo 。
+	 * 特殊符号用 \ 隔
+	 * 
+	 * @param pattern
+	 * @return
+	 */
+	public Set<String> keySet(String pattern);
 }

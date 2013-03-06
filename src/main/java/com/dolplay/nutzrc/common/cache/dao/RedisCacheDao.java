@@ -1,5 +1,8 @@
 package com.dolplay.nutzrc.common.cache.dao;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.json.Json;
 
@@ -114,5 +117,37 @@ public class RedisCacheDao implements CacheDao {
 				jedisPool.returnResource(jedis);
 		}
 		return success == 1 ? true : false;
+	}
+
+	@Override
+	public boolean exists(String cacheName) {
+		Jedis jedis = null;
+		boolean isExist = false;
+		try {
+			jedis = jedisPool.getResource();
+			isExist = jedis.exists(cacheName);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return isExist;
+	}
+
+	@Override
+	public Set<String> keySet(String pattern) {
+		Jedis jedis = null;
+		Set<String> keySet = new HashSet<String>();
+		try {
+			jedis = jedisPool.getResource();
+			keySet = jedis.keys(pattern);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return keySet;
 	}
 }
