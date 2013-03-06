@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.dolplay.nutzrc.common.cache.CStrings;
 import com.dolplay.nutzrc.common.cache.CacheConfig;
 import com.dolplay.nutzrc.common.cache.annotation.Cache;
-import com.dolplay.nutzrc.common.cache.annotation.CacheNameSuffix;
+import com.dolplay.nutzrc.common.cache.annotation.CacheKeySuffix;
 import com.dolplay.nutzrc.common.cache.dao.CacheDao;
 
 /**
@@ -35,11 +35,11 @@ public class CacheInterceptor implements MethodInterceptor {
 		Method method = chain.getCallingMethod();
 		Cache cacheAn = method.getAnnotation(Cache.class);
 		Object[] args = chain.getArgs();
-		// 获取cacheName
-		String cacheName = createCacheName(args, method, cacheAn);
-		// 若cacheName不为空，将对该缓存及该方法返回值做相应操作否则直接执行方法
-		if (cacheName != null) {
-			cacheReturn(cacheName, chain, method, cacheAn);
+		// 获取cacheKey
+		String cacheKey = createCacheKey(args, method, cacheAn);
+		// 若cacheKey不为空，将对该缓存及该方法返回值做相应操作否则直接执行方法
+		if (cacheKey != null) {
+			cacheReturn(cacheKey, chain, method, cacheAn);
 		} else {
 			// 执行方法
 			chain.doChain();
@@ -51,21 +51,21 @@ public class CacheInterceptor implements MethodInterceptor {
 	 * @param chain
 	 * @return
 	 */
-	protected String createCacheName(Object args[], Method method, Cache cacheAn) {
-		String cacheName = null;
+	protected String createCacheKey(Object args[], Method method, Cache cacheAn) {
+		String cacheKey = null;
 
-		// 获取缓存KEY的前缀：cacheNamePrefix
-		String cacheNamePrefix = cacheAn.cacheNamePrefix();
-		// 若cacheNamePrefix不为空，将对该缓存做相应操作否则直接执行方法
-		if (!Strings.isEmpty(cacheNamePrefix)) {
-			// 获取该方法欲读取的缓存的 KEY——将拼接方法注解中的cacheNamePrefix及标有“CacheNameSuffix”注解的参数
+		// 获取缓存KEY的前缀：cacheKeyPrefix
+		String cacheKeyPrefix = cacheAn.cacheKeyPrefix();
+		// 若cacheKeyPrefix不为空，将对该缓存做相应操作否则直接执行方法
+		if (!Strings.isEmpty(cacheKeyPrefix)) {
+			// 获取该方法欲读取的缓存的 KEY——将拼接方法注解中的cacheKeyPrefix及标有“CacheKeySuffix”注解的参数
 			String[] cacheParaArr = new String[args.length];
 			Annotation[][] ans = method.getParameterAnnotations();
 			int k = 0;
 			if (ans.length > 0) {
 				for (int i = 0; i < ans.length; i++) {
 					for (int j = 0; j < ans[i].length; j++) {
-						if (ans[i][j].annotationType() == CacheNameSuffix.class) {
+						if (ans[i][j].annotationType() == CacheKeySuffix.class) {
 							if (args[i] == null) {
 								cacheParaArr[k] = "N/A";
 							} else if (CharSequence.class.isAssignableFrom(args[i].getClass())) {
@@ -78,29 +78,29 @@ public class CacheInterceptor implements MethodInterceptor {
 					}
 				}
 			}
-			cacheName = CStrings.cacheName(cacheNamePrefix, cacheParaArr);
-			logger.debug("Cache name : " + cacheName);
+			cacheKey = CStrings.cacheKey(cacheKeyPrefix, cacheParaArr);
+			logger.debug("Cache key : " + cacheKey);
 		} else {
-			logger.warn("cacheNamePrefix is empty!");
+			logger.warn("cacheKeyPrefix is empty!");
 		}
 
-		return cacheName;
+		return cacheKey;
 	}
 
 	/**
 	 * 操作缓存和方法的返回值
 	 * 先取缓存值，如果缓存值不为空，将其赋给方法的返回值；如果缓存值为空，将执行方法，并获取方法返回值，将该值再赋给缓存
-	 * @param cacheName
+	 * @param cacheKey
 	 * @param chain
 	 * @param method
 	 * @param cacheAn
 	 * @throws Throwable
 	 */
-	protected void cacheReturn(String cacheName, InterceptorChain chain, Method method, Cache cacheAn) throws Throwable {
+	protected void cacheReturn(String cacheKey, InterceptorChain chain, Method method, Cache cacheAn) throws Throwable {
 		// 获取该方法欲读取的缓存的 VALUE
 		String cacheValue = null;
 		try {
-			cacheValue = cacheDao().get(cacheName);
+			cacheValue = cacheDao().get(cacheKey);
 		} catch (Exception e) {
 			logger.error("Read Cache error", e);
 		}
@@ -122,9 +122,9 @@ public class CacheInterceptor implements MethodInterceptor {
 			try {
 				//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
 				if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
-					cacheDao().set(cacheName, cacheTimeout, cacheValue);
+					cacheDao().set(cacheKey, cacheTimeout, cacheValue);
 				} else {
-					cacheDao().set(cacheName, returnObj);
+					cacheDao().set(cacheKey, returnObj);
 				}
 				logger.debug("Set a new value for this cache");
 			} catch (Exception e) {

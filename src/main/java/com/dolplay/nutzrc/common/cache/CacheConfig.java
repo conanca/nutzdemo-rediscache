@@ -5,7 +5,7 @@ public class CacheConfig {
 	/**
 	 * 缓存名前缀和(一个或多个)后缀拼接时用的间隔符号 
 	 */
-	public final static String CACHENAME_DELIMITER = ":";
+	public final static String CACHEKEY_DELIMITER = ":";
 
 	/**
 	 * 默认的普通类型缓存的超时时间，单位为秒

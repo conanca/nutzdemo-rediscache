@@ -26,19 +26,19 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 	/**
 	 * 为有序集缓存的值增添一个成员，需指定该成员的score。
 	 * 如果缓存不存在则创建这个缓存，并指定缓存超时时间；如果超时时间小于等于0，则为永久缓存
-	 * @param cacheName
+	 * @param cacheKey
 	 * @param seconds
 	 * @param score
 	 * @param item
 	 */
-	public void zAdd(String cacheName, int seconds, double score, String item) {
+	public void zAdd(String cacheKey, int seconds, double score, String item) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			boolean isNew = !jedis.exists(cacheName);
-			jedis.zadd(cacheName, score, item);
+			boolean isNew = !jedis.exists(cacheKey);
+			jedis.zadd(cacheKey, score, item);
 			if (isNew && seconds > 0) {
-				jedis.expire(cacheName, seconds);
+				jedis.expire(cacheKey, seconds);
 			}
 		} catch (Exception e) {
 			throw e;
@@ -51,35 +51,35 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 	/**
 	 * 为有序集缓存的值增添一个成员，需指定该成员的score。
 	 * 如果缓存不存在则创建这个缓存，注：缓存超时时间由配置文件配置
-	 * @param cacheName
+	 * @param cacheKey
 	 * @param score
 	 * @param item
 	 */
-	public void zAdd(String cacheName, double score, String item) {
+	public void zAdd(String cacheKey, double score, String item) {
 		int timeout = config.getInt("LIST_CACHE_TIMEOUT", CacheConfig.DEFAULT_LIST_CACHE_TIMEOUT);
-		zAdd(cacheName, timeout, score, item);
+		zAdd(cacheKey, timeout, score, item);
 	}
 
 	/**
 	 * 查询有序集缓存，按照区间及排序方式
 	 * 如：startIndex=0 endIndex=9 order=Order.Desc，按倒序取第1条-第10条
-	 * @param cacheName
+	 * @param cacheKey
 	 * @param key
 	 * @param startIndex
 	 * @param endIndex
 	 * @param order
 	 * @return
 	 */
-	public List<String> zQueryByRank(String cacheName, long startIndex, long endIndex, Order order) {
+	public List<String> zQueryByRank(String cacheKey, long startIndex, long endIndex, Order order) {
 		Jedis jedis = null;
 		List<String> valueList = null;
 		try {
 			jedis = jedisPool.getResource();
 			Set<String> valueSet = null;
 			if (order.equals(Order.Asc)) {
-				valueSet = jedis.zrange(cacheName, startIndex, endIndex);
+				valueSet = jedis.zrange(cacheKey, startIndex, endIndex);
 			} else {
-				valueSet = jedis.zrevrange(cacheName, startIndex, endIndex);
+				valueSet = jedis.zrevrange(cacheKey, startIndex, endIndex);
 			}
 			valueList = new ArrayList<String>();
 			valueList.addAll(valueSet);
@@ -95,23 +95,23 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 	/**
 	 * 查询有序集缓存，按照score值范围及排序方式
 	 * minScore=1997 maxScore=2013 order=Order.Desc，按倒序取score值在1997-2013的
-	 * @param cacheName
+	 * @param cacheKey
 	 * @param key
 	 * @param minScore
 	 * @param maxScore
 	 * @param order
 	 * @return
 	 */
-	public List<String> zQueryByScore(String cacheName, double minScore, double maxScore, Order order) {
+	public List<String> zQueryByScore(String cacheKey, double minScore, double maxScore, Order order) {
 		Jedis jedis = null;
 		List<String> valueList = null;
 		try {
 			jedis = jedisPool.getResource();
 			Set<String> valueSet = null;
 			if (order.equals(Order.Asc)) {
-				valueSet = jedis.zrangeByScore(cacheName, minScore, maxScore);
+				valueSet = jedis.zrangeByScore(cacheKey, minScore, maxScore);
 			} else {
-				valueSet = jedis.zrevrangeByScore(cacheName, minScore, maxScore);
+				valueSet = jedis.zrevrangeByScore(cacheKey, minScore, maxScore);
 			}
 			valueList = new ArrayList<String>();
 			valueList.addAll(valueSet);
@@ -126,14 +126,14 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 
 	/**
 	 * 删除有序集缓存的一部分成员，按照成员的值
-	 * @param cacheName
+	 * @param cacheKey
 	 * @param items
 	 */
-	public void zDel(String cacheName, String... items) {
+	public void zDel(String cacheKey, String... items) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.zrem(cacheName, items);
+			jedis.zrem(cacheKey, items);
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -144,15 +144,15 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 
 	/**
 	 * 删除有序集缓存的一部分成员，按照区间
-	 * @param cacheName
+	 * @param cacheKey
 	 * @param startIndex
 	 * @param endIndex
 	 */
-	public void zDelByRank(String cacheName, long startIndex, long endIndex) {
+	public void zDelByRank(String cacheKey, long startIndex, long endIndex) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.zremrangeByRank(cacheName, startIndex, endIndex);
+			jedis.zremrangeByRank(cacheKey, startIndex, endIndex);
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -163,15 +163,15 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 
 	/**
 	 * 删除有序集缓存的一部分成员，按照socre值的范围
-	 * @param cacheName
+	 * @param cacheKey
 	 * @param startIndex
 	 * @param endIndex
 	 */
-	public void zDelByScore(String cacheName, double minScore, double maxScore) {
+	public void zDelByScore(String cacheKey, double minScore, double maxScore) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.zremrangeByScore(cacheName, minScore, maxScore);
+			jedis.zremrangeByScore(cacheKey, minScore, maxScore);
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -182,16 +182,16 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 
 	/**
 	 * 为给定缓存设置生存时间，当缓存 过期时(生存时间为 0 )，它会被自动删除
-	 * @param cacheName
+	 * @param cacheKey
 	 * @param seconds
 	 * @return
 	 */
-	public boolean expire(String cacheName, int seconds) {
+	public boolean expire(String cacheKey, int seconds) {
 		Jedis jedis = null;
 		long success = 0;
 		try {
 			jedis = jedisPool.getResource();
-			success = jedis.expire(cacheName, seconds);
+			success = jedis.expire(cacheKey, seconds);
 		} catch (Exception e) {
 			throw e;
 		} finally {

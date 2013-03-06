@@ -8,10 +8,10 @@ import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 
-import com.dolplay.nutzrc.common.cache.CacheName;
+import com.dolplay.nutzrc.common.cache.CacheKeyPrefix;
 import com.dolplay.nutzrc.common.cache.CStrings;
 import com.dolplay.nutzrc.common.cache.annotation.Cache;
-import com.dolplay.nutzrc.common.cache.annotation.CacheNameSuffix;
+import com.dolplay.nutzrc.common.cache.annotation.CacheKeySuffix;
 import com.dolplay.nutzrc.common.cache.dao.CacheDao;
 import com.dolplay.nutzrc.common.cache.service.CacheIdEntityService;
 import com.dolplay.nutzrc.domain.User;
@@ -44,7 +44,7 @@ public class UserService extends CacheIdEntityService<User> {
 	 * @return
 	 */
 	@Aop("cacheInterceptor")
-	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS)
+	@Cache(cacheKeyPrefix = CacheKeyPrefix.SYSTEM_ALLUSERS)
 	public List<User> list() {
 		return query(null, null);
 	}
@@ -57,8 +57,8 @@ public class UserService extends CacheIdEntityService<User> {
 	 * @return
 	 */
 	@Aop("cacheInterceptor")
-	@Cache(cacheNamePrefix = CacheName.SYSTEM_USER)
-	public User view(@CacheNameSuffix int id) {
+	@Cache(cacheKeyPrefix = CacheKeyPrefix.SYSTEM_USER)
+	public User view(@CacheKeySuffix int id) {
 		return fetch(id);
 	}
 
@@ -80,7 +80,7 @@ public class UserService extends CacheIdEntityService<User> {
 	public void update(int id, User user) {
 		dao().update(user);
 		// 立即更新缓存
-		cacheDao().set(CStrings.cacheName(CacheName.SYSTEM_USER, id), user);
+		cacheDao().set(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_USER, id), user);
 	}
 
 	/**
@@ -90,13 +90,13 @@ public class UserService extends CacheIdEntityService<User> {
 	public void remove(int id) {
 		delete(id);
 		// 立即删除缓存
-		cacheDao().remove(CStrings.cacheName(CacheName.SYSTEM_USER, id));
+		cacheDao().remove(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_USER, id));
 	}
 
 	/**
 	 * 手动删除全部用户列表缓存
 	 */
 	public void delCacheForTest() {
-		cacheDao().remove(CacheName.SYSTEM_ALLUSERS);
+		cacheDao().remove(CacheKeyPrefix.SYSTEM_ALLUSERS);
 	}
 }

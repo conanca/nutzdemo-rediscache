@@ -27,18 +27,18 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 		return cacheDao;
 	}
 
-	protected void cacheReturn(String cacheName, InterceptorChain chain, Method method, Cache cacheAn) throws Throwable {
+	protected void cacheReturn(String cacheKey, InterceptorChain chain, Method method, Cache cacheAn) throws Throwable {
 		// 获取缓存超时时间
 		int cacheTimeout = cacheAn.cacheTimeout();
 		// 获取缓存类型，根据缓存类型不同分别对缓存有不同的操作方式
 		CacheType cacheType = cacheAn.cacheType();
 		if (cacheType.equals(CacheType.String)) {
-			super.cacheReturn(cacheName, chain, method, cacheAn);
+			super.cacheReturn(cacheKey, chain, method, cacheAn);
 		} else if (cacheType.equals(CacheType.List)) {
 			// 获取该方法欲读取的缓存的 VALUE
 			List<String> cacheValue = null;
 			try {
-				cacheValue = cacheDao().zQueryByRank(cacheName, 0, -1, Order.Asc);
+				cacheValue = cacheDao().zQueryByRank(cacheKey, 0, -1, Order.Asc);
 			} catch (Exception e) {
 				logger.error("Read Cache error", e);
 			}
@@ -60,12 +60,12 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 					//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
 					if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
 						for (String item : returnObj) {
-							cacheDao().zAdd(cacheName, cacheTimeout, new Date().getTime(), item);
+							cacheDao().zAdd(cacheKey, cacheTimeout, new Date().getTime(), item);
 							Thread.sleep(1);
 						}
 					} else {
 						for (String item : returnObj) {
-							cacheDao().zAdd(cacheName, new Date().getTime(), item);
+							cacheDao().zAdd(cacheKey, new Date().getTime(), item);
 							Thread.sleep(1);
 						}
 					}
