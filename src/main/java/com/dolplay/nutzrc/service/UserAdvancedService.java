@@ -25,8 +25,8 @@ import com.dolplay.nutzrc.domain.User;
 
 /**
  * @author Conanca
- * 用户查询id集合等操作的Service类
- * 演示使用有序集合型缓存的一个示例
+ * 对"用户"的相关操作的Service类
+ * (演示使用缓存方法拦截器及手动操作缓存的一个示例)
  */
 @IocBean(args = { "refer:dao", "refer:advancedCacheDao" })
 public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
@@ -50,12 +50,6 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 		return query(null, null);
 	}
 
-	@Aop("advancedCacheInterceptor")
-	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS_INPAGE)
-	public List<User> listInPage(@CacheNameSuffix Pager pager) {
-		return query(null, pager);
-	}
-
 	/**
 	 * 查询指定id的用户
 	 * 指定了缓存名的前缀为cache:system:user,后缀为用户id(先取相应缓存的值,如果有值则直接返回该值不执行本方法,没有值则执行该方法并设置缓存)
@@ -67,6 +61,18 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	@Cache(cacheNamePrefix = CacheName.SYSTEM_USER)
 	public User view(@CacheNameSuffix int id) {
 		return fetch(id);
+	}
+
+	/**
+	 * 查询指定分页的用户列表
+	 * 其中形参pager会被转为json字符串作为缓存名后缀
+	 * @param pager
+	 * @return
+	 */
+	@Aop("advancedCacheInterceptor")
+	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS_INPAGE)
+	public List<User> listInPage(@CacheNameSuffix Pager pager) {
+		return query(null, pager);
 	}
 
 	/**
@@ -108,6 +114,12 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 		cacheDao().remove(CacheName.SYSTEM_ALLUSERS);
 	}
 
+	/**
+	 * 根据指定性别查询用户Id列表
+	 * 缓存类型为有序集合
+	 * @param gender
+	 * @return
+	 */
 	@Aop("advancedCacheInterceptor")
 	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS_IDLIST, cacheType = CacheType.List)
 	public List<String> listIdByGender(@CacheNameSuffix String gender) {
@@ -119,6 +131,13 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 		return idList;
 	}
 
+	/**
+	 * 查询2007-01-01之前出生的用户的id列表
+	 * 该示例演示手动操作有序集合缓存
+	 * 缓存类型为有序集合(item值即用户id，score值为用户出生日期，按该值顺序存储)
+	 * @return
+	 * @throws ParseException
+	 */
 	public List<String> oldUserListId() throws ParseException {
 		List<String> idList = null;
 		idList = cacheDao().zQueryByRank(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), 0, -1,
@@ -138,12 +157,20 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 		return idList;
 	}
 
+	/**
+	 * 插入一个新用户，并手动更新缓存：2007-01-01之前出生的用户的id列表
+	 * @param user
+	 */
 	public void insertAndUpdateCache(User user) {
 		dao().insert(user);
 		cacheDao().zAdd(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), -1,
 				user.getBirthday().getTime(), String.valueOf(user.getId()));
 	}
 
+	/**
+	 * 删除一个用户，并手动更新缓存：2007-01-01之前出生的用户的id列表
+	 * @param user
+	 */
 	public void deleteAndUpdateCache(User user) {
 		dao().delete(user);
 		cacheDao().zDel(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), String.valueOf(user.getId()));

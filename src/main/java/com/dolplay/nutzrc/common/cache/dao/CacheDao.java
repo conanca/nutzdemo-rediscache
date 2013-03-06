@@ -36,7 +36,7 @@ public interface CacheDao {
 	public long remove(String... cacheNames);
 
 	/**
-	 * 为给定缓存设置生存时间，当缓存 过期时(生存时间为 0 )，它会被自动删除
+	 * 为给定缓存设置超时时间，当缓存 过期时(超时时间为 0 )，它会被自动删除
 	 * @param cacheName
 	 * @param seconds
 	 * @return
