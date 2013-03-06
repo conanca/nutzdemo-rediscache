@@ -5,9 +5,9 @@ nutzdemo-rediscache
 
 本项目演示了一个应用如何通过nutz.Aop实现使用redis作为数据库的缓存
 
-* 提供了一个缓存预先读取及缓存自动设值的方法拦截器，用于数据库读取的方法
+* 提供了一个缓存预先读取及缓存自动设值的方法拦截器，用于拦截数据库查询的方法
 * 提供了用于手动操作缓存的CacheDao
-* 支持普通类型缓存和有序集型缓存(注意：有序集缓存都是永久缓存)
+* 支持普通类型缓存和有序集型缓存
 
 ## Example
 
@@ -20,7 +20,9 @@ nutzdemo-rediscache
 @IocBean(args = { "refer:dao", "refer:advancedCacheDao" })
 public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	private static Logger logger = LoggerFactory.getLogger(UserAdvancedService.class);
+
 	private static final String MARKDATE = "2007-01-01";
+
 	public UserAdvancedService(Dao dao, AdvancedCacheDao listCacheDao) {
 		super(dao, listCacheDao);
 	}
@@ -32,7 +34,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 * @return
 	 */
 	@Aop("advancedCacheInterceptor")
-	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS)
+	@Cache(cacheKeyPrefix = CacheKeyPrefix.SYSTEM_ALLUSERS)
 	public List<User> list() {
 		return query(null, null);
 	}
@@ -45,8 +47,8 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 * @return
 	 */
 	@Aop("advancedCacheInterceptor")
-	@Cache(cacheNamePrefix = CacheName.SYSTEM_USER)
-	public User view(@CacheNameSuffix int id) {
+	@Cache(cacheKeyPrefix = CacheKeyPrefix.SYSTEM_USER)
+	public User view(@CacheKeySuffix int id) {
 		return fetch(id);
 	}
 
@@ -57,8 +59,8 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 * @return
 	 */
 	@Aop("advancedCacheInterceptor")
-	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS_INPAGE)
-	public List<User> listInPage(@CacheNameSuffix Pager pager) {
+	@Cache(cacheKeyPrefix = CacheKeyPrefix.SYSTEM_ALLUSERS_INPAGE)
+	public List<User> listInPage(@CacheKeySuffix Pager pager) {
 		return query(null, pager);
 	}
 
@@ -80,8 +82,8 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	public void update(int id, User user) {
 		dao().update(user);
 		// 立即更新缓存
-		logger.debug("立即更新缓存:" + CStrings.cacheName(CacheName.SYSTEM_USER, id));
-		cacheDao().set(CStrings.cacheName(CacheName.SYSTEM_USER, id), user);
+		logger.debug("立即更新缓存:" + CStrings.cacheKey(CacheKeyPrefix.SYSTEM_USER, id));
+		cacheDao().set(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_USER, id), user);
 	}
 
 	/**
@@ -91,14 +93,14 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	public void remove(int id) {
 		delete(id);
 		// 立即删除缓存
-		cacheDao().remove(CStrings.cacheName(CacheName.SYSTEM_USER, id));
+		cacheDao().remove(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_USER, id));
 	}
 
 	/**
 	 * 手动删除全部用户列表缓存
 	 */
 	public void delAllUsersCache() {
-		cacheDao().remove(CacheName.SYSTEM_ALLUSERS);
+		cacheDao().remove(CacheKeyPrefix.SYSTEM_ALLUSERS);
 	}
 
 	/**
@@ -108,8 +110,8 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 * @return
 	 */
 	@Aop("advancedCacheInterceptor")
-	@Cache(cacheNamePrefix = CacheName.SYSTEM_ALLUSERS_IDLIST, cacheType = CacheType.List)
-	public List<String> listIdByGender(@CacheNameSuffix String gender) {
+	@Cache(cacheKeyPrefix = CacheKeyPrefix.SYSTEM_ALLUSERS_IDLIST, cacheType = CacheType.List)
+	public List<String> listIdByGender(@CacheKeySuffix String gender) {
 		List<User> userList = query(Cnd.where("gender", "=", gender), null);
 		List<String> idList = new ArrayList<String>();
 		for (User u : userList) {
@@ -127,7 +129,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 */
 	public List<String> oldUserListId() throws ParseException {
 		List<String> idList = null;
-		idList = cacheDao().zQueryByRank(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), 0, -1,
+		idList = cacheDao().zQueryByRank(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_OLDUSERS_IDLIST, MARKDATE), 0, -1,
 				Order.Asc);
 		if (idList == null || idList.size() == 0) {
 			List<User> oldUserList = query(
@@ -137,7 +139,7 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 			for (User u : oldUserList) {
 				String uId = String.valueOf(u.getId());
 				idList.add(uId);
-				cacheDao().zAdd(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), -1,
+				cacheDao().zAdd(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_OLDUSERS_IDLIST, MARKDATE),
 						u.getBirthday().getTime(), uId);
 			}
 		}
@@ -150,8 +152,8 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 */
 	public void insertAndUpdateCache(User user) {
 		dao().insert(user);
-		cacheDao().zAdd(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), -1,
-				user.getBirthday().getTime(), String.valueOf(user.getId()));
+		cacheDao().zAdd(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_OLDUSERS_IDLIST, MARKDATE), user.getBirthday().getTime(),
+				String.valueOf(user.getId()));
 	}
 
 	/**
@@ -160,6 +162,6 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 */
 	public void deleteAndUpdateCache(User user) {
 		dao().delete(user);
-		cacheDao().zDel(CStrings.cacheName(CacheName.SYSTEM_OLDUSERS_IDLIST, MARKDATE), String.valueOf(user.getId()));
+		cacheDao().zDel(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_OLDUSERS_IDLIST, MARKDATE), String.valueOf(user.getId()));
 	}
 }
