@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.nutz.aop.InterceptorChain;
+import org.nutz.lang.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,18 +58,7 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 			List<String> returnObj = (List<String>) chain.getReturn();
 			if (returnObj != null) {
 				try {
-					//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
-					if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
-						for (String item : returnObj) {
-							cacheDao().zAdd(cacheKey, cacheTimeout, new Date().getTime(), item);
-							Thread.sleep(1);
-						}
-					} else {
-						for (String item : returnObj) {
-							cacheDao().zAdd(cacheKey, new Date().getTime(), item);
-							Thread.sleep(1);
-						}
-					}
+					setCache(cacheKey, returnObj, cacheAn.reverse(), cacheTimeout);
 					logger.debug("Set a new value for this cache");
 				} catch (Exception e) {
 					logger.error("Set cache error", e);
@@ -79,6 +69,26 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 		} else {
 			logger.error("The method annotation : CacheType Error!", new RuntimeException(
 					"The method annotation : CacheType Error"));
+		}
+	}
+
+	private void setCache(String cacheKey, List<String> returnObj, boolean reverse, int cacheTimeout)
+			throws InterruptedException {
+		String[] itemArr = Lang.collection2array(returnObj);
+		if (reverse) {
+			Lang.reverse(itemArr);
+		}
+		//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
+		if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
+			for (String item : itemArr) {
+				cacheDao().zAdd(cacheKey, cacheTimeout, new Date().getTime(), item);
+				Thread.sleep(1);
+			}
+		} else {
+			for (String item : itemArr) {
+				cacheDao().zAdd(cacheKey, new Date().getTime(), item);
+				Thread.sleep(1);
+			}
 		}
 	}
 }

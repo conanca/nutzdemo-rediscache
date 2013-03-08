@@ -38,4 +38,11 @@ public @interface Cache {
 	 */
 	public int cacheTimeout() default CacheConfig.INVALID_TIMEOUT;
 
+	/**
+	 * 指明CacheType为List类型时，往缓存中存放有序集时，是否倒转原有顺序。
+	 * 缺省不倒转
+	 * @return
+	 */
+	public boolean reverse() default false;
+
 }
