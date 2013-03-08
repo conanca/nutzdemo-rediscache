@@ -1,7 +1,5 @@
 package com.dolplay.nutzrc.common.cache;
 
-import org.nutz.lang.Strings;
-
 /**
  * 缓存相关的字符串操作的帮助类
  * @author conanca
@@ -19,10 +17,12 @@ public class CStrings {
 		StringBuilder sb = new StringBuilder(cacheKeyPrefix);
 		if (cacheKeySuffixs != null && cacheKeySuffixs.length > 0) {
 			for (String cacheKeySuffix : cacheKeySuffixs) {
-				if (!Strings.isEmpty(cacheKeySuffix)) {
-					sb.append(CacheConfig.CACHEKEY_DELIMITER);
-					sb.append(cacheKeySuffix);
+				// 如果缓存名称后缀为null，则拼接一个空字符串
+				if (cacheKeySuffix == null) {
+					cacheKeySuffix = "";
 				}
+				sb.append(CacheConfig.CACHEKEY_DELIMITER);
+				sb.append(cacheKeySuffix);
 			}
 		}
 		return sb.toString();

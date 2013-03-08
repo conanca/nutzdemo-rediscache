@@ -67,7 +67,7 @@ public class CacheInterceptor implements MethodInterceptor {
 					for (int j = 0; j < ans[i].length; j++) {
 						if (ans[i][j].annotationType() == CacheKeySuffix.class) {
 							if (args[i] == null) {
-								cacheParaArr[k] = "N/A";
+								cacheParaArr[k] = "";
 							} else if (CharSequence.class.isAssignableFrom(args[i].getClass())) {
 								cacheParaArr[k] = args[i].toString();
 							} else {
