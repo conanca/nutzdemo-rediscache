@@ -25,22 +25,11 @@ public class RedisCacheDao implements CacheDao {
 		this.jedisPool = jedisPool;
 	}
 
-	/**
-	 * 增加一个缓存，如果存在将更新该缓存。注：缓存超时时间由配置文件配置
-	 * @param cacheKey
-	 * @param cacheValue
-	 */
 	public void set(String cacheKey, Object cacheValue) {
 		int timeout = config.getInt("STANDARD_CACHE_TIMEOUT", CacheConfig.DEFAULT_STANDARD_CACHE_TIMEOUT);
 		set(cacheKey, timeout, cacheValue);
 	}
 
-	/**
-	 * 增加一个缓存，如果存在将更新该缓存。可指定缓存超时时间，如果超时时间小于等于0，则为永久缓存
-	 * @param cacheKey
-	 * @param timeout
-	 * @param cacheValue
-	 */
 	public void set(String cacheKey, int timeout, Object cacheValue) {
 		Jedis jedis = null;
 		try {
@@ -58,11 +47,6 @@ public class RedisCacheDao implements CacheDao {
 		}
 	}
 
-	/**
-	 * 根据缓存名获取一个缓存的值
-	 * @param cacheKey
-	 * @return
-	 */
 	public String get(String cacheKey) {
 		String valueJson = null;
 		Jedis jedis = null;
@@ -78,11 +62,6 @@ public class RedisCacheDao implements CacheDao {
 		return valueJson;
 	}
 
-	/**
-	 * 删除一个或多个缓存。
-	 * @param cacheKeys
-	 * @return
-	 */
 	public long remove(String... cacheKeys) {
 		Jedis jedis = null;
 		Long count = null;
@@ -98,12 +77,6 @@ public class RedisCacheDao implements CacheDao {
 		return count == null ? 0 : count.longValue();
 	}
 
-	/**
-	 * 为给定缓存设置超时时间，当缓存 过期时(超时时间为 0 )，它会被自动删除
-	 * @param cacheKey
-	 * @param seconds
-	 * @return
-	 */
 	public boolean expire(String cacheKey, int seconds) {
 		Jedis jedis = null;
 		long success = 0;
@@ -119,7 +92,6 @@ public class RedisCacheDao implements CacheDao {
 		return success == 1 ? true : false;
 	}
 
-	@Override
 	public boolean exists(String cacheKey) {
 		Jedis jedis = null;
 		boolean isExist = false;
@@ -135,7 +107,6 @@ public class RedisCacheDao implements CacheDao {
 		return isExist;
 	}
 
-	@Override
 	public Set<String> keySet(String pattern) {
 		Jedis jedis = null;
 		Set<String> keySet = new HashSet<String>();
