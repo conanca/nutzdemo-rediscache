@@ -67,6 +67,24 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		return valueList;
 	}
 
+	public List<String> zQueryByRank(String cacheKey, long startIndex, long endIndex) {
+		Jedis jedis = null;
+		List<String> valueList = null;
+		try {
+			jedis = jedisPool.getResource();
+			Set<String> valueSet = null;
+			valueSet = jedis.zrange(cacheKey, startIndex, endIndex);
+			valueList = new ArrayList<String>();
+			valueList.addAll(valueSet);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return valueList;
+	}
+
 	public List<String> zQueryByScore(String cacheKey, double minScore, double maxScore, Order order) {
 		Jedis jedis = null;
 		List<String> valueList = null;
@@ -89,8 +107,30 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		return valueList;
 	}
 
+	public List<String> zQueryByScore(String cacheKey, double minScore, double maxScore) {
+		Jedis jedis = null;
+		List<String> valueList = null;
+		try {
+			jedis = jedisPool.getResource();
+			Set<String> valueSet = null;
+			valueSet = jedis.zrangeByScore(cacheKey, minScore, maxScore);
+			valueList = new ArrayList<String>();
+			valueList.addAll(valueSet);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return valueList;
+	}
+
 	public List<String> zQueryAll(String cacheKey, Order order) {
 		return zQueryByRank(cacheKey, 0, -1, order);
+	}
+
+	public List<String> zQueryAll(String cacheKey) {
+		return zQueryByRank(cacheKey, 0, -1);
 	}
 
 	public void zDel(String cacheKey, String... items) {
