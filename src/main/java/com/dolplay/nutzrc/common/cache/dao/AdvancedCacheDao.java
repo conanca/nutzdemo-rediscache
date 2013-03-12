@@ -18,8 +18,9 @@ public interface AdvancedCacheDao extends CacheDao {
 	 * @param seconds
 	 * @param score
 	 * @param item
+	 * @throws Exception
 	 */
-	public void zAdd(String cacheKey, int seconds, double score, String item);
+	public void zAdd(String cacheKey, int seconds, double score, String item) throws Exception;
 
 	/**
 	 * 为有序集缓存的值增添一个成员，需指定该成员的score
@@ -27,8 +28,9 @@ public interface AdvancedCacheDao extends CacheDao {
 	 * @param cacheKey
 	 * @param score
 	 * @param item
+	 * @throws Exception
 	 */
-	public void zAdd(String cacheKey, double score, String item);
+	public void zAdd(String cacheKey, double score, String item) throws Exception;
 
 	/**
 	 * 查询有序集缓存，按照区间及排序方式
@@ -39,8 +41,9 @@ public interface AdvancedCacheDao extends CacheDao {
 	 * @param endIndex
 	 * @param order
 	 * @return
+	 * @throws Exception
 	 */
-	public List<String> zQueryByRank(String cacheKey, long startIndex, long endIndex, Order order);
+	public List<String> zQueryByRank(String cacheKey, long startIndex, long endIndex, Order order) throws Exception;
 
 	/**
 	 * 查询有序集缓存，按照区间
@@ -50,8 +53,9 @@ public interface AdvancedCacheDao extends CacheDao {
 	 * @param startIndex
 	 * @param endIndex
 	 * @return
+	 * @throws Exception
 	 */
-	public List<String> zQueryByRank(String cacheKey, long startIndex, long endIndex);
+	public List<String> zQueryByRank(String cacheKey, long startIndex, long endIndex) throws Exception;
 
 	/**
 	 * 查询有序集缓存，按照score值范围及排序方式
@@ -62,8 +66,9 @@ public interface AdvancedCacheDao extends CacheDao {
 	 * @param maxScore
 	 * @param order
 	 * @return
+	 * @throws Exception
 	 */
-	public List<String> zQueryByScore(String cacheKey, double minScore, double maxScore, Order order);
+	public List<String> zQueryByScore(String cacheKey, double minScore, double maxScore, Order order) throws Exception;
 
 	/**
 	 * 查询有序集缓存，按照score值范围
@@ -73,8 +78,9 @@ public interface AdvancedCacheDao extends CacheDao {
 	 * @param minScore
 	 * @param maxScore
 	 * @return
+	 * @throws Exception
 	 */
-	public List<String> zQueryByScore(String cacheKey, double minScore, double maxScore);
+	public List<String> zQueryByScore(String cacheKey, double minScore, double maxScore) throws Exception;
 
 	/**
 	 * 查询有序集缓存（全部item），按照排序方式
@@ -83,7 +89,7 @@ public interface AdvancedCacheDao extends CacheDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<String> zQueryAll(String cacheKey, Order order);
+	public List<String> zQueryAll(String cacheKey, Order order) throws Exception;
 
 	/**
 	 * 查询有序集缓存（全部item）
@@ -91,28 +97,31 @@ public interface AdvancedCacheDao extends CacheDao {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<String> zQueryAll(String cacheKey);
+	public List<String> zQueryAll(String cacheKey) throws Exception;
 
 	/**
 	 * 删除有序集缓存的一部分成员，按照成员的值
 	 * @param cacheKey
 	 * @param items
+	 * @throws Exception
 	 */
-	public void zDel(String cacheKey, String... items);
+	public void zDel(String cacheKey, String... items) throws Exception;
 
 	/**
 	 * 删除有序集缓存的一部分成员，按照区间
 	 * @param cacheKey
 	 * @param startIndex
 	 * @param endIndex
+	 * @throws Exception
 	 */
-	public void zDelByRank(String cacheKey, long startIndex, long endIndex);
+	public void zDelByRank(String cacheKey, long startIndex, long endIndex) throws Exception;
 
 	/**
 	 * 删除有序集缓存的一部分成员，按照socre值的范围
 	 * @param cacheKey
 	 * @param startIndex
 	 * @param endIndex
+	 * @throws Exception
 	 */
-	public void zDelByScore(String cacheKey, double minScore, double maxScore);
+	public void zDelByScore(String cacheKey, double minScore, double maxScore) throws Exception;
 }

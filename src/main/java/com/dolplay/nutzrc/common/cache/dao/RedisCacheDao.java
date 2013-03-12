@@ -25,12 +25,12 @@ public class RedisCacheDao implements CacheDao {
 		this.jedisPool = jedisPool;
 	}
 
-	public void set(String cacheKey, Object cacheValue) {
+	public void set(String cacheKey, Object cacheValue) throws Exception {
 		int timeout = config.getInt("STANDARD_CACHE_TIMEOUT", CacheConfig.DEFAULT_STANDARD_CACHE_TIMEOUT);
 		set(cacheKey, timeout, cacheValue);
 	}
 
-	public void set(String cacheKey, int timeout, Object cacheValue) {
+	public void set(String cacheKey, int timeout, Object cacheValue) throws Exception {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
@@ -47,7 +47,7 @@ public class RedisCacheDao implements CacheDao {
 		}
 	}
 
-	public String get(String cacheKey) {
+	public String get(String cacheKey) throws Exception {
 		String valueJson = null;
 		Jedis jedis = null;
 		try {
@@ -62,7 +62,7 @@ public class RedisCacheDao implements CacheDao {
 		return valueJson;
 	}
 
-	public long remove(String... cacheKeys) {
+	public long remove(String... cacheKeys) throws Exception {
 		Jedis jedis = null;
 		Long count = null;
 		try {
@@ -77,7 +77,7 @@ public class RedisCacheDao implements CacheDao {
 		return count == null ? 0 : count.longValue();
 	}
 
-	public boolean expire(String cacheKey, int seconds) {
+	public boolean expire(String cacheKey, int seconds) throws Exception {
 		Jedis jedis = null;
 		long success = 0;
 		try {
@@ -92,7 +92,7 @@ public class RedisCacheDao implements CacheDao {
 		return success == 1 ? true : false;
 	}
 
-	public boolean exists(String cacheKey) {
+	public boolean exists(String cacheKey) throws Exception {
 		Jedis jedis = null;
 		boolean isExist = false;
 		try {
@@ -107,7 +107,7 @@ public class RedisCacheDao implements CacheDao {
 		return isExist;
 	}
 
-	public Set<String> keySet(String pattern) {
+	public Set<String> keySet(String pattern) throws Exception {
 		Jedis jedis = null;
 		Set<String> keySet = new HashSet<String>();
 		try {

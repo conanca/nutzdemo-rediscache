@@ -1,6 +1,5 @@
 package com.dolplay.nutzrc.service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class UserAdvancedServiceTest {
 	}
 
 	@Test
-	public void testCache() {
+	public void testCache() throws Exception {
 		Ioc ioc = IocProvider.ioc();
 		// 获取UserService示例
 		userService = ioc.get(UserAdvancedService.class);
@@ -98,7 +97,7 @@ public class UserAdvancedServiceTest {
 	}
 
 	@Test
-	public void testAdvancedCache() throws ParseException {
+	public void testAdvancedCache() throws Exception {
 		Ioc ioc = IocProvider.ioc();
 		// 获取UserService示例
 		userService = ioc.get(UserAdvancedService.class);

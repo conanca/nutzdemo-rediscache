@@ -8,8 +8,8 @@ import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 
-import com.dolplay.nutzrc.common.cache.CacheKeyPrefix;
 import com.dolplay.nutzrc.common.cache.CStrings;
+import com.dolplay.nutzrc.common.cache.CacheKeyPrefix;
 import com.dolplay.nutzrc.common.cache.annotation.Cache;
 import com.dolplay.nutzrc.common.cache.annotation.CacheKeySuffix;
 import com.dolplay.nutzrc.common.cache.dao.CacheDao;
@@ -76,8 +76,9 @@ public class UserService extends CacheIdEntityService<User> {
 	 * @param id
 	 * @param user
 	 * @return
+	 * @throws Exception 
 	 */
-	public void update(int id, User user) {
+	public void update(int id, User user) throws Exception {
 		dao().update(user);
 		// 立即更新缓存
 		cacheDao().set(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_USER, id), user);
@@ -86,8 +87,9 @@ public class UserService extends CacheIdEntityService<User> {
 	/**
 	 * 删除一个用户,并手动删除相应缓存cache:system:user:[id]
 	 * @param id
+	 * @throws Exception 
 	 */
-	public void remove(int id) {
+	public void remove(int id) throws Exception {
 		delete(id);
 		// 立即删除缓存
 		cacheDao().remove(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_USER, id));
@@ -95,8 +97,9 @@ public class UserService extends CacheIdEntityService<User> {
 
 	/**
 	 * 手动删除全部用户列表缓存
+	 * @throws Exception 
 	 */
-	public void delCacheForTest() {
+	public void delCacheForTest() throws Exception {
 		cacheDao().remove(CacheKeyPrefix.SYSTEM_ALLUSERS);
 	}
 }

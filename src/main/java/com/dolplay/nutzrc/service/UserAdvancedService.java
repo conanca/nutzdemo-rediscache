@@ -1,6 +1,5 @@
 package com.dolplay.nutzrc.service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,8 +88,9 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 * @param id
 	 * @param user
 	 * @return
+	 * @throws Exception 
 	 */
-	public void update(int id, User user) {
+	public void update(int id, User user) throws Exception {
 		dao().update(user);
 		// 立即更新缓存
 		logger.debug("立即更新缓存:" + CStrings.cacheKey(CacheKeyPrefix.SYSTEM_USER, id));
@@ -100,8 +100,9 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	/**
 	 * 删除一个用户,并手动删除相应缓存cache:system:user:[id]
 	 * @param id
+	 * @throws Exception 
 	 */
-	public void remove(int id) {
+	public void remove(int id) throws Exception {
 		delete(id);
 		// 立即删除缓存
 		cacheDao().remove(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_USER, id));
@@ -109,8 +110,9 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 
 	/**
 	 * 手动删除全部用户列表缓存
+	 * @throws Exception 
 	 */
-	public void delAllUsersCache() {
+	public void delAllUsersCache() throws Exception {
 		cacheDao().remove(CacheKeyPrefix.SYSTEM_ALLUSERS);
 	}
 
@@ -136,9 +138,9 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	 * 该示例演示手动操作有序集合缓存
 	 * 缓存类型为有序集合(item值即用户id，score值为用户出生日期，按该值顺序存储)
 	 * @return
-	 * @throws ParseException
+	 * @throws Exception 
 	 */
-	public List<String> oldUserListId() throws ParseException {
+	public List<String> oldUserListId() throws Exception {
 		List<String> idList = null;
 		idList = cacheDao().zQueryByRank(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_OLDUSERS_IDLIST, MARKDATE), 0, -1,
 				Order.Asc);
@@ -160,19 +162,22 @@ public class UserAdvancedService extends AdvancedCacheIdEntityService<User> {
 	/**
 	 * 插入一个新用户，并手动更新缓存：2007-01-01之前出生的用户的id列表
 	 * @param user
+	 * @throws Exception 
 	 */
-	public void insertAndUpdateCache(User user) {
+	public void insertAndUpdateCache(User user) throws Exception {
 		dao().insert(user);
-		cacheDao().zAdd(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_OLDUSERS_IDLIST, MARKDATE), user.getBirthday().getTime(),
-				String.valueOf(user.getId()));
+		cacheDao().zAdd(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_OLDUSERS_IDLIST, MARKDATE),
+				user.getBirthday().getTime(), String.valueOf(user.getId()));
 	}
 
 	/**
 	 * 删除一个用户，并手动更新缓存：2007-01-01之前出生的用户的id列表
 	 * @param user
+	 * @throws Exception 
 	 */
-	public void deleteAndUpdateCache(User user) {
+	public void deleteAndUpdateCache(User user) throws Exception {
 		dao().delete(user);
-		cacheDao().zDel(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_OLDUSERS_IDLIST, MARKDATE), String.valueOf(user.getId()));
+		cacheDao().zDel(CStrings.cacheKey(CacheKeyPrefix.SYSTEM_OLDUSERS_IDLIST, MARKDATE),
+				String.valueOf(user.getId()));
 	}
 }

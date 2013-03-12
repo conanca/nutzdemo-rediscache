@@ -42,7 +42,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void test() {
+	public void test() throws Exception {
 		Ioc ioc = IocProvider.ioc();
 		// 获取UserService示例
 		userService = ioc.get(UserService.class);

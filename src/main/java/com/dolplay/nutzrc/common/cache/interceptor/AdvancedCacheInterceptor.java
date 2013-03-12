@@ -71,8 +71,7 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 		}
 	}
 
-	private void setCache(String cacheKey, List<String> returnObj, boolean reverse, int cacheTimeout)
-			throws InterruptedException {
+	private void setCache(String cacheKey, List<String> returnObj, boolean reverse, int cacheTimeout) throws Exception {
 		String[] itemArr = Lang.collection2array(returnObj);
 		if (reverse) {
 			Lang.reverse(itemArr);

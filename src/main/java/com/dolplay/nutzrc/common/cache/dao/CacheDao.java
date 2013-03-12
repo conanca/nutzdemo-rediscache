@@ -12,8 +12,9 @@ public interface CacheDao {
 	 * 增加一个缓存，如果存在将更新该缓存。注：缓存超时时间由配置文件配置
 	 * @param cacheKey
 	 * @param cacheValue
+	 * @throws Exception
 	 */
-	public void set(String cacheKey, Object cacheValue);
+	public void set(String cacheKey, Object cacheValue) throws Exception;
 
 	/**
 	 * 增加一个缓存，如果存在将更新该缓存。可指定缓存超时时间，如果超时时间小于等于0，则为永久缓存
@@ -21,21 +22,21 @@ public interface CacheDao {
 	 * @param timeout
 	 * @param cacheValue
 	 */
-	public void set(String cacheKey, int timeout, Object cacheValue);
+	public void set(String cacheKey, int timeout, Object cacheValue) throws Exception;
 
 	/**
 	 * 根据缓存名获取一个缓存的值
 	 * @param cacheKey
 	 * @return
 	 */
-	public String get(String cacheKey);
+	public String get(String cacheKey) throws Exception;
 
 	/**
 	 * 删除一个或多个缓存。
 	 * @param cacheKeys
 	 * @return
 	 */
-	public long remove(String... cacheKeys);
+	public long remove(String... cacheKeys) throws Exception;
 
 	/**
 	 * 为给定缓存设置超时时间，当缓存 过期时(超时时间为 0 )，它会被自动删除
@@ -43,14 +44,14 @@ public interface CacheDao {
 	 * @param seconds
 	 * @return
 	 */
-	public boolean expire(String cacheKey, int seconds);
+	public boolean expire(String cacheKey, int seconds) throws Exception;
 
 	/**
 	 * 判断给定 key 是否存在
 	 * @param cacheKey
 	 * @return
 	 */
-	public boolean exists(String cacheKey);
+	public boolean exists(String cacheKey) throws Exception;
 
 	/**
 	 * 查找所有符合给定模式 pattern 的 key
@@ -64,5 +65,5 @@ public interface CacheDao {
 	 * @param pattern
 	 * @return
 	 */
-	public Set<String> keySet(String pattern);
+	public Set<String> keySet(String pattern) throws Exception;
 }
