@@ -1,7 +1,6 @@
 package com.dolplay.nutzrc.common.cache.interceptor;
 
 import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.List;
 
 import org.nutz.aop.InterceptorChain;
@@ -81,12 +80,12 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 		//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
 		if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
 			for (String item : itemArr) {
-				cacheDao().zAdd(cacheKey, cacheTimeout, new Date().getTime(), item);
+				cacheDao().zAdd(cacheKey, cacheTimeout, System.currentTimeMillis(), item);
 				Thread.sleep(1);
 			}
 		} else {
 			for (String item : itemArr) {
-				cacheDao().zAdd(cacheKey, new Date().getTime(), item);
+				cacheDao().zAdd(cacheKey, System.currentTimeMillis(), item);
 				Thread.sleep(1);
 			}
 		}
