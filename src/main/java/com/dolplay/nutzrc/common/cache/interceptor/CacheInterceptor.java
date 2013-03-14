@@ -122,7 +122,7 @@ public class CacheInterceptor implements MethodInterceptor {
 			try {
 				//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
 				if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
-					cacheDao().set(cacheKey, cacheTimeout, cacheValue);
+					cacheDao().set(cacheKey, cacheTimeout, returnObj);
 				} else {
 					cacheDao().set(cacheKey, returnObj);
 				}
