@@ -1,6 +1,5 @@
 package com.dolplay.nutzrc.common.cache.dao;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -109,7 +108,7 @@ public class RedisCacheDao implements CacheDao {
 
 	public Set<String> keySet(String pattern) throws Exception {
 		Jedis jedis = null;
-		Set<String> keySet = new HashSet<String>();
+		Set<String> keySet = null;
 		try {
 			jedis = jedisPool.getResource();
 			keySet = jedis.keys(pattern);
