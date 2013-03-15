@@ -41,8 +41,9 @@ public class RedisCacheDao implements CacheDao {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 	}
 
@@ -55,8 +56,10 @@ public class RedisCacheDao implements CacheDao {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
+
 		}
 		return valueJson;
 	}
@@ -70,8 +73,9 @@ public class RedisCacheDao implements CacheDao {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 		return count == null ? 0 : count.longValue();
 	}
@@ -85,8 +89,9 @@ public class RedisCacheDao implements CacheDao {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 		return success == 1 ? true : false;
 	}
@@ -100,8 +105,9 @@ public class RedisCacheDao implements CacheDao {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 		return isExist;
 	}
@@ -115,8 +121,9 @@ public class RedisCacheDao implements CacheDao {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 		return keySet;
 	}

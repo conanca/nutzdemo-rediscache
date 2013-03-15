@@ -35,8 +35,9 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 	}
 
@@ -61,8 +62,9 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 		return valueList;
 	}
@@ -79,8 +81,9 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 		return valueList;
 	}
@@ -101,8 +104,9 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 		return valueList;
 	}
@@ -119,8 +123,9 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 		return valueList;
 	}
@@ -141,8 +146,9 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 	}
 
@@ -154,8 +160,9 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 	}
 
@@ -167,8 +174,9 @@ public class RedisAdvancedCacheDao extends RedisCacheDao implements AdvancedCach
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (jedis != null)
+			if (jedis != null) {
 				jedisPool.returnResource(jedis);
+			}
 		}
 	}
 }
