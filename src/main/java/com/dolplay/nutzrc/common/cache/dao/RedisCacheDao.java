@@ -3,11 +3,11 @@ package com.dolplay.nutzrc.common.cache.dao;
 import java.util.Set;
 
 import org.nutz.ioc.impl.PropertiesProxy;
-import org.nutz.json.Json;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import com.alibaba.fastjson.JSON;
 import com.dolplay.nutzrc.common.cache.CacheConfig;
 
 /**
@@ -34,9 +34,9 @@ public class RedisCacheDao implements CacheDao {
 		try {
 			jedis = jedisPool.getResource();
 			if (timeout <= 0) {
-				jedis.set(cacheKey, Json.toJson(cacheValue));
+				jedis.set(cacheKey, JSON.toJSONString(cacheValue));
 			} else {
-				jedis.setex(cacheKey, timeout, Json.toJson(cacheValue));
+				jedis.setex(cacheKey, timeout, JSON.toJSONString(cacheValue));
 			}
 		} catch (Exception e) {
 			throw e;

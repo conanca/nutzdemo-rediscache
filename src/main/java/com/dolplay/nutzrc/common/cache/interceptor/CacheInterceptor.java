@@ -5,12 +5,12 @@ import java.lang.reflect.Method;
 
 import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
-import org.nutz.json.Json;
-import org.nutz.json.JsonFormat;
 import org.nutz.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dolplay.nutzrc.common.cache.CStrings;
 import com.dolplay.nutzrc.common.cache.CacheConfig;
 import com.dolplay.nutzrc.common.cache.annotation.Cache;
@@ -71,7 +71,7 @@ public class CacheInterceptor implements MethodInterceptor {
 							} else if (CharSequence.class.isAssignableFrom(args[i].getClass())) {
 								cacheParaArr[k] = args[i].toString();
 							} else {
-								cacheParaArr[k] = Json.toJson(args[i], JsonFormat.compact().setQuoteName(false));
+								cacheParaArr[k] = JSON.toJSONString(args[i], SerializerFeature.UseSingleQuotes);
 							}
 							k++;
 						}
@@ -106,7 +106,7 @@ public class CacheInterceptor implements MethodInterceptor {
 		}
 		// 若缓存值不为空，则该方法直接返回缓存里相应的值
 		if (cacheValue != null) {
-			chain.setReturnValue(Json.fromJson(method.getReturnType(), cacheValue));
+			chain.setReturnValue(JSON.parseObject(cacheValue, method.getReturnType()));
 			logger.debug("Get a value from this cache");
 			return;
 		} else {
