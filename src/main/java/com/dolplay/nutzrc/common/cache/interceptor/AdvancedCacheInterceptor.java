@@ -79,19 +79,18 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 	private void setCache(String cacheKey, List<String> returnObj, boolean reverse, int cacheTimeout) throws Exception {
 		List<String> items = new ArrayList<String>();
 		items.addAll(returnObj);
+		// 如果需要倒序存放入缓存中，则将顺序倒转
 		if (reverse) {
 			Collections.reverse(items);
 		}
-		//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
-		if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
-			for (String item : items) {
-				cacheDao().zAdd(cacheKey, cacheTimeout, System.currentTimeMillis(), item);
-				Thread.sleep(1);
-			}
-		} else {
-			for (String item : items) {
-				cacheDao().zAdd(cacheKey, System.currentTimeMillis(), item);
-				Thread.sleep(1);
+		// 按items的顺序依次插入相应的缓存中
+		long now = System.currentTimeMillis();
+		for (String item : items) {
+			// 如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
+			if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
+				cacheDao().zAdd(cacheKey, cacheTimeout, now++, item);
+			} else {
+				cacheDao().zAdd(cacheKey, now++, item);
 			}
 		}
 	}
