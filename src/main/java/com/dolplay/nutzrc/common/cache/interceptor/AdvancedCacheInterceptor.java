@@ -39,7 +39,11 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 			// 获取该方法欲读取的缓存的 VALUE
 			List<String> cacheValue = null;
 			try {
-				cacheValue = cacheDao().zQueryByRank(cacheKey, 0, -1, Order.Asc);
+				if (cacheAn.reverse()) {
+					cacheValue = cacheDao().zQueryByRank(cacheKey, 0, -1, Order.Desc);
+				} else {
+					cacheValue = cacheDao().zQueryByRank(cacheKey, 0, -1, Order.Asc);
+				}
 			} catch (Exception e) {
 				logger.error("Read Cache error", e);
 			}
