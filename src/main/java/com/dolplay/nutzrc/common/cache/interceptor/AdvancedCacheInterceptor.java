@@ -29,8 +29,6 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 	}
 
 	protected void cacheReturn(String cacheKey, InterceptorChain chain, Method method, Cache cacheAn) throws Throwable {
-		// 获取缓存超时时间
-		int cacheTimeout = cacheAn.cacheTimeout();
 		// 获取缓存类型，根据缓存类型不同分别对缓存有不同的操作方式
 		CacheType cacheType = cacheAn.cacheType();
 		if (cacheType.equals(CacheType.String)) {
@@ -62,7 +60,7 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 			List<String> returnObj = (List<String>) chain.getReturn();
 			if (returnObj != null) {
 				try {
-					setCache(cacheKey, returnObj, cacheAn.reverse(), cacheTimeout);
+					setCache(cacheKey, returnObj, cacheAn.reverse(), cacheAn.cacheTimeout());
 					logger.debug("Set a new value for this cache");
 				} catch (Exception e) {
 					logger.error("Set cache error", e);
@@ -85,9 +83,10 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 		}
 		// 按items的顺序依次插入相应的缓存中
 		long now = System.currentTimeMillis();
+		boolean cacheTimeoutValid = cacheTimeout != CacheConfig.INVALID_TIMEOUT;
 		for (String item : items) {
 			// 如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
-			if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
+			if (cacheTimeoutValid) {
 				cacheDao().zAdd(cacheKey, cacheTimeout, now++, item);
 			} else {
 				cacheDao().zAdd(cacheKey, now++, item);
