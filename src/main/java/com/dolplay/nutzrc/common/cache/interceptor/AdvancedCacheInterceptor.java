@@ -1,6 +1,7 @@
 package com.dolplay.nutzrc.common.cache.interceptor;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,17 +73,19 @@ public class AdvancedCacheInterceptor extends CacheInterceptor {
 	}
 
 	private void setCache(String cacheKey, List<String> returnObj, boolean reverse, int cacheTimeout) throws Exception {
+		List<String> items = new ArrayList<String>();
+		items.addAll(returnObj);
 		if (reverse) {
-			Collections.reverse(returnObj);
+			Collections.reverse(items);
 		}
 		//如果缓存超时时间设置的有效，则新增缓存时设置该超时时间，否则设置配置文件中所配置的超时时间
 		if (cacheTimeout != CacheConfig.INVALID_TIMEOUT) {
-			for (String item : returnObj) {
+			for (String item : items) {
 				cacheDao().zAdd(cacheKey, cacheTimeout, System.currentTimeMillis(), item);
 				Thread.sleep(1);
 			}
 		} else {
-			for (String item : returnObj) {
+			for (String item : items) {
 				cacheDao().zAdd(cacheKey, System.currentTimeMillis(), item);
 				Thread.sleep(1);
 			}
